@@ -1,0 +1,19 @@
+{
+    "name": "quite",
+    "dependencies": [
+        "sdl3",
+        "cli11",
+        "fmt",
+        "quill",
+        "libsystemd",
+        {
+            "name": "imgui",
+            "features": [
+                "freetype",
+                "docking-experimental",
+                "sdl3-binding",
+                "sdl3-renderer-binding"
+            ]
+        }
+    ]
+}
