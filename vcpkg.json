@@ -6,6 +6,7 @@
         "fmt",
         "quill",
         "libsystemd",
+        "nativefiledialog-extended",
         {
             "name": "imgui",
             "features": [
