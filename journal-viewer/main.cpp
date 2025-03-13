@@ -138,9 +138,9 @@ SDL_AppResult SDL_AppIterate(void *appstate)
                     ImGui::TableSetColumnIndex(0);
                     ImGui::TextUnformatted(formatted_time.c_str());
                     ImGui::TableSetColumnIndex(1);
-                    ImGui::TextUnformatted(it->unit.data());
+                    ImGui::TextUnformatted(it->unit.c_str());
                     ImGui::TableSetColumnIndex(2);
-                    ImGui::TextUnformatted(it->message.data());
+                    ImGui::TextUnformatted(it->message.c_str());
                     // ImGui::PopStyleColor();
                     count++;
                 }

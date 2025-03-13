@@ -23,8 +23,8 @@ using UtcTimepoint = std::chrono::system_clock::time_point;
 struct JournalEntry
 {
     sd_id128_t id{};
-    std::string_view unit;
-    std::string_view message;
+    std::string unit;
+    std::string message;
     Priority priority;
     UtcTimepoint utc;
 };
