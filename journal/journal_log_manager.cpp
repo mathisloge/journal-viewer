@@ -11,6 +11,5 @@ JournalLogManager::JournalLogManager(const std::filesystem::path &file_or_direct
         // todo handle r error
         journal_.reset(std::move(tmp));
     }
-    sd_journal_get_cursor(journal_.get(), &cursor_);
 }
 } // namespace jrn

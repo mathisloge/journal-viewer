@@ -69,11 +69,9 @@ void JournalLogWindow::draw()
         clipper.Begin(10000);
         while (clipper.Step())
         {
-            int count = clipper.DisplayStart;
-            for (auto it = manager_.begin(clipper.DisplayStart); not it.is_end() and count < clipper.DisplayEnd; it++)
-            {
+            manager_.for_each(clipper.DisplayStart, clipper.DisplayEnd, [](JournalEntry entry) {
                 ImGui::TableNextRow();
-                ImGui::TableSetBgColor(ImGuiTableBgTarget_RowBg0, [prio = it->priority] {
+                ImGui::TableSetBgColor(ImGuiTableBgTarget_RowBg0, [prio = entry.priority] {
                     switch (prio)
                     {
                     case jrn::Priority::emergency:
@@ -95,16 +93,14 @@ void JournalLogWindow::draw()
                     }
                     return IM_COL32(0, 0, 0, 255);
                 }());
-                const auto formatted_time{fmt::format("{}", it->utc)};
+                const auto formatted_time{fmt::format("{}", entry.utc)};
                 ImGui::TableSetColumnIndex(0);
                 ImGui::TextUnformatted(formatted_time.c_str());
                 ImGui::TableSetColumnIndex(1);
-                ImGui::TextUnformatted(it->unit.c_str());
+                ImGui::TextUnformatted(entry.unit.c_str());
                 ImGui::TableSetColumnIndex(2);
-                ImGui::TextUnformatted(it->message.c_str());
-                // ImGui::PopStyleColor();
-                count++;
-            }
+                ImGui::TextUnformatted(entry.message.c_str());
+            });
         }
 
         ImGui::EndTable();
