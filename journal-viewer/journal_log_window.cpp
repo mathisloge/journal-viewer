@@ -5,6 +5,10 @@
 
 namespace jrn
 {
+namespace
+{
+void draw_entry(const JournalEntry &entry);
+}
 JournalLogWindow::JournalLogWindow(std::string title, const std::filesystem::path &file_or_directory)
     : title_{std::move(title)}
     , manager_{file_or_directory}
@@ -66,45 +70,57 @@ void JournalLogWindow::draw()
         ImGui::TableHeadersRow();
 
         ImGuiListClipper clipper;
-        clipper.Begin(10000);
+        clipper.Begin(1000000);
         while (clipper.Step())
         {
-            manager_.for_each(clipper.DisplayStart, clipper.DisplayEnd, [](JournalEntry entry) {
-                ImGui::TableNextRow();
-                ImGui::TableSetBgColor(ImGuiTableBgTarget_RowBg0, [prio = entry.priority] {
-                    switch (prio)
-                    {
-                    case jrn::Priority::emergency:
-                        return IM_COL32(112, 2, 147, 255);
-                    case jrn::Priority::alert:
-                        return IM_COL32(147, 2, 105, 255);
-                    case jrn::Priority::critical:
-                        return IM_COL32(147, 2, 2, 255);
-                    case jrn::Priority::error:
-                        return IM_COL32(143, 21, 0, 255);
-                    case jrn::Priority::warning:
-                        return IM_COL32(138, 83, 0, 255);
-                    case jrn::Priority::notice:
-                        return IM_COL32(54, 106, 12, 255);
-                    case jrn::Priority::info:
-                        return IM_COL32(0, 96, 138, 255);
-                    case jrn::Priority::debug:
-                        return IM_COL32(58, 77, 85, 255);
-                    }
-                    return IM_COL32(0, 0, 0, 255);
-                }());
-                const auto formatted_time{fmt::format("{}", entry.utc)};
-                ImGui::TableSetColumnIndex(0);
-                ImGui::TextUnformatted(formatted_time.c_str());
-                ImGui::TableSetColumnIndex(1);
-                ImGui::TextUnformatted(entry.unit.c_str());
-                ImGui::TableSetColumnIndex(2);
-                ImGui::TextUnformatted(entry.message.c_str());
-            });
+            // don't seek the head for the first items.
+            if ((clipper.DisplayEnd - clipper.DisplayStart) == 1)
+            {
+                draw_entry({});
+                continue;
+            }
+            manager_.for_each( clipper.DisplayStart, clipper.DisplayEnd, draw_entry);
         }
 
         ImGui::EndTable();
     }
     ImGui::End();
 }
+
+namespace
+{
+void draw_entry(const JournalEntry &entry)
+{
+    ImGui::TableNextRow();
+    ImGui::TableSetBgColor(ImGuiTableBgTarget_RowBg0, [prio = entry.priority] {
+        switch (prio)
+        {
+        case jrn::Priority::emergency:
+            return IM_COL32(112, 2, 147, 255);
+        case jrn::Priority::alert:
+            return IM_COL32(147, 2, 105, 255);
+        case jrn::Priority::critical:
+            return IM_COL32(147, 2, 2, 255);
+        case jrn::Priority::error:
+            return IM_COL32(143, 21, 0, 255);
+        case jrn::Priority::warning:
+            return IM_COL32(138, 83, 0, 255);
+        case jrn::Priority::notice:
+            return IM_COL32(54, 106, 12, 255);
+        case jrn::Priority::info:
+            return IM_COL32(0, 96, 138, 255);
+        case jrn::Priority::debug:
+            return IM_COL32(58, 77, 85, 255);
+        }
+        return IM_COL32(0, 0, 0, 255);
+    }());
+    const auto formatted_time{fmt::format("{}", entry.utc)};
+    ImGui::TableSetColumnIndex(0);
+    ImGui::TextUnformatted(formatted_time.c_str());
+    ImGui::TableSetColumnIndex(1);
+    ImGui::TextUnformatted(entry.unit.c_str());
+    ImGui::TableSetColumnIndex(2);
+    ImGui::TextUnformatted(entry.message.c_str());
+}
+} // namespace
 } // namespace jrn
