@@ -14,6 +14,7 @@
             "installDir": "${sourceDir}/dist",
             "cacheVariables": {
                 "CMAKE_EXPORT_COMPILE_COMMANDS": true,
+                "CMAKE_PROJECT_TOP_LEVEL_INCLUDES": "${sourceDir}/cmake/DeclareDependencyProvider.cmake",
                 "BUILD_SHARED_LIBS": "ON"
             }
         },
@@ -40,8 +41,8 @@
             "name": "use-gcc",
             "hidden": true,
             "cacheVariables": {
-                "CMAKE_C_COMPILER": "gcc-13",
-                "CMAKE_CXX_COMPILER": "g++-13"
+                "CMAKE_C_COMPILER": "gcc",
+                "CMAKE_CXX_COMPILER": "g++"
             }
         },
         {
@@ -56,7 +57,6 @@
             "displayName": "Developer gcc",
             "inherits": [
                 "common",
-                "vcpkg",
                 "use-gcc",
                 "debug-build",
                 "developer"
