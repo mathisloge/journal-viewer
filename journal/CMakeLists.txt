@@ -14,6 +14,7 @@ target_sources(journal PRIVATE
     journal_log_manager.hpp
     journal_entry.cpp
     journal_entry.hpp
+    journal_cache.hpp
 )
 
 target_include_directories(journal PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

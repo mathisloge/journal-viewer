@@ -70,18 +70,11 @@ void JournalLogWindow::draw()
         ImGui::TableHeadersRow();
 
         ImGuiListClipper clipper;
-        clipper.Begin(1000000);
+        clipper.Begin(manager_.min_count_entries());
         while (clipper.Step())
         {
-            // don't seek the head for the first items.
-            if ((clipper.DisplayEnd - clipper.DisplayStart) == 1)
-            {
-                draw_entry({});
-                continue;
-            }
-            manager_.for_each( clipper.DisplayStart, clipper.DisplayEnd, draw_entry);
+            manager_.for_each(clipper.DisplayStart, clipper.DisplayEnd, draw_entry);
         }
-
         ImGui::EndTable();
     }
     ImGui::End();
