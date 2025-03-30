@@ -10,7 +10,7 @@ env:
   
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
     - name: Export GitHub Actions cache environment variables
@@ -32,3 +32,8 @@ jobs:
 
     - name: Run workflow
       run: cmake --workflow ci
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: "journal-viewer-ubuntu-24.04"
+        path: "build/journal-viewer-*.deb"
