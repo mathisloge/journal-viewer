@@ -61,18 +61,65 @@
                 "debug-build",
                 "developer"
             ]
+        },
+        {
+            "name": "ci",
+            "displayName": "CI configuration",
+            "inherits": [
+                "common",
+                "use-gcc"
+            ],
+            "toolchainFile": "${sourceDir}/vcpkg/scripts/buildsystems/vcpkg.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "RelWithDebInfo",
+                "BUILD_TESTING": true
+            }
         }
     ],
     "buildPresets": [
         {
             "name": "developer-gcc",
             "configurePreset": "developer-gcc"
+        },
+        {
+            "name": "ci",
+            "configurePreset": "ci"
         }
     ],
     "testPresets": [
         {
             "name": "developer-gcc",
             "configurePreset": "developer-gcc"
+        },
+        {
+            "name": "ci",
+            "configurePreset": "ci",
+            "output": {
+                "outputOnFailure": true
+            },
+            "execution": {
+                "noTestsAction": "ignore",
+                "stopOnFailure": true
+            }
+        }
+    ],
+    "workflowPresets": [
+        {
+            "name": "ci",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "ci"
+                },
+                {
+                    "type": "build",
+                    "name": "ci"
+                },
+                {
+                    "type": "test",
+                    "name": "ci"
+                }
+            ]
         }
     ]
 }
