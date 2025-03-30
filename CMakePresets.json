@@ -69,7 +69,7 @@
                 "common",
                 "use-gcc"
             ],
-            "toolchainFile": "$penv{VCPKG_HOME}/scripts/buildsystems/vcpkg.cmake",
+            "toolchainFile": "vcpkg/scripts/buildsystems/vcpkg.cmake",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "RelWithDebInfo",
                 "BUILD_TESTING": true
