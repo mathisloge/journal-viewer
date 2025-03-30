@@ -14,8 +14,15 @@
             "installDir": "${sourceDir}/dist",
             "cacheVariables": {
                 "CMAKE_EXPORT_COMPILE_COMMANDS": true,
+                "BUILD_SHARED_LIBS": "OFF"
+            }
+        },
+        {
+            "name": "cmake-fetch-dependencies",
+            "hidden": true,
+            "cacheVariables": {
                 "CMAKE_PROJECT_TOP_LEVEL_INCLUDES": "${sourceDir}/cmake/DeclareDependencyProvider.cmake",
-                "BUILD_SHARED_LIBS": "ON"
+                "DO_FETCH_DEPENDENCIES": true
             }
         },
         {
@@ -59,7 +66,8 @@
                 "common",
                 "use-gcc",
                 "debug-build",
-                "developer"
+                "developer",
+                "cmake-fetch-dependencies"
             ]
         },
         {

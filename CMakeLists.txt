@@ -10,6 +10,7 @@ include(GNUInstallDirs)
 include(GetGitRevisionDescription)
 include(Dependencies)
 
+option(DO_FETCH_DEPENDENCIES "true if cmake should fetch most of the dependencies" OFF)
 fetch_dependencies()
 
 set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
