@@ -1,14 +1,15 @@
 #pragma once
-#include <filesystem>
 #include "details/sd_journal.hpp"
 #include "journal_cache.hpp"
 #include "journal_entry.hpp"
+#include "journal_instance_handle.hpp"
+
 namespace jrn
 {
 class JournalLogManager
 {
   public:
-    explicit JournalLogManager(const std::filesystem::path &file_or_directory);
+    explicit JournalLogManager(JournalInstanceHandle handle);
 
     void for_each(std::uint64_t begin, std::uint64_t end, auto &&predicate)
     {

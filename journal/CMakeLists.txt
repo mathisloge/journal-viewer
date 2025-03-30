@@ -14,6 +14,9 @@ target_sources(journal PRIVATE
     journal_log_manager.hpp
     journal_entry.cpp
     journal_entry.hpp
+    journal_instance_handle.hpp
+    journal_instance.cpp
+    journal_instance.hpp
     journal_cache.hpp
 )
 

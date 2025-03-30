@@ -9,9 +9,10 @@ namespace
 {
 void draw_entry(const JournalEntry &entry);
 }
-JournalLogWindow::JournalLogWindow(std::string title, const std::filesystem::path &file_or_directory)
+
+JournalLogWindow::JournalLogWindow(std::string title, JournalInstanceHandle handle)
     : title_{std::move(title)}
-    , manager_{file_or_directory}
+    , manager_{handle}
 {}
 
 void JournalLogWindow::draw()

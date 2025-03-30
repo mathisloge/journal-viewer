@@ -3,13 +3,13 @@
 
 namespace jrn
 {
-std::optional<std::filesystem::path> choose_directory()
+std::expected<std::filesystem::path, std::string> choose_directory()
 {
     NFD::UniquePathN path;
     const auto result = NFD::PickFolder(path);
     if (result != NFD_OKAY)
     {
-        return std::nullopt;
+        return std::unexpected("Filedialog aborted");
     }
     return std::filesystem::path{path.get()};
 }

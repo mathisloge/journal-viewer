@@ -93,7 +93,7 @@ class JournalCache
     }
 
   private:
-    std::uint64_t cache_interval_{200};
+    std::uint64_t cache_interval_{500};
     std::uint64_t cached_count_{};
     sd_journal *journal_;
     std::vector<std::string> cache_;

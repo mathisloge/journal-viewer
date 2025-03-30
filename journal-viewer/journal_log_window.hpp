@@ -1,4 +1,5 @@
 #pragma once
+#include <journal_instance_handle.hpp>
 #include <journal_log_manager.hpp>
 
 namespace jrn
@@ -6,7 +7,7 @@ namespace jrn
 struct JournalLogWindow
 {
   public:
-    JournalLogWindow(std::string title, const std::filesystem::path &file_or_directory);
+    explicit JournalLogWindow(std::string title, JournalInstanceHandle handle);
     void draw();
 
   private:
