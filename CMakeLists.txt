@@ -11,7 +11,9 @@ include(GetGitRevisionDescription)
 include(Dependencies)
 
 option(DO_FETCH_DEPENDENCIES "true if cmake should fetch most of the dependencies" OFF)
-fetch_dependencies()
+if(DO_FETCH_DEPENDENCIES)
+    fetch_dependencies()
+endif()
 
 set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
 set(CMAKE_CXX_EXTENSIONS OFF)
