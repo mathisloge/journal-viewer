@@ -35,7 +35,7 @@ class journalViewerRecipe(ConanFile):
         deps = CMakeDeps(self)
         deps.generate()
         tc = CMakeToolchain(self)
-        tc.user_presets_path = 'ConanPresets.json'
+        tc.user_presets_path = "ConanPresets.json"
         tc.generate()
 
     def build(self):
@@ -46,7 +46,3 @@ class journalViewerRecipe(ConanFile):
     def package(self):
         cmake = CMake(self)
         cmake.install()
-
-    
-
-    

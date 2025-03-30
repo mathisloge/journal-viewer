@@ -39,7 +39,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char **argv)
     {
         return SDL_AppResult::SDL_APP_FAILURE;
     }
-    
+
     if (not SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMEPAD))
     {
         return SDL_AppResult::SDL_APP_FAILURE;
