@@ -2,8 +2,6 @@ cmrc_add_resource_library(journal-viewer-resources ALIAS journal::viewer-resourc
     SourceCodePro-Regular.ttf
 )
 
-
-
 add_executable(journal-viewer main.cpp)
 
 target_link_libraries(journal-viewer PRIVATE

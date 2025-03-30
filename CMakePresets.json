@@ -2,7 +2,7 @@
     "version": 6,
     "cmakeMinimumRequired": {
         "major": 3,
-        "minor": 26,
+        "minor": 28,
         "patch": 0
     },
     "configurePresets": [
@@ -103,6 +103,15 @@
             }
         }
     ],
+    "packagePresets": [
+        {
+            "name": "ci",
+            "configurePreset": "ci",
+            "generators": [
+                "DEB"
+            ]
+        }
+    ],
     "workflowPresets": [
         {
             "name": "ci",
@@ -117,6 +126,10 @@
                 },
                 {
                     "type": "test",
+                    "name": "ci"
+                },
+                {
+                    "type": "package",
                     "name": "ci"
                 }
             ]

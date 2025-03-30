@@ -32,3 +32,7 @@ find_package(CMakeRC CONFIG REQUIRED)
 
 add_subdirectory(journal)
 add_subdirectory(journal-viewer)
+
+
+install(TARGETS journal-viewer)
+include(CPack)

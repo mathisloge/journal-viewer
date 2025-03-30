@@ -27,6 +27,8 @@ jobs:
         ref: "acd5bba5aac8b6573b5f6f463dc0341ac0ee6fa4"
         path: vcpkg
 
-      
+    - name: Install system dependencies
+      run: sudo apt install libltdl-dev
+
     - name: Run workflow
       run: cmake --workflow ci
