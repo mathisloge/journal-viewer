@@ -1,15 +1,15 @@
 #pragma once
-#include <expected>
 #include <filesystem>
 #include "details/sd_journal.hpp"
 #include "journal_instance_handle.hpp"
+#include "result.hpp"
 
 namespace jrn
 {
 class JournalInstance
 {
   public:
-    static std::expected<JournalInstanceHandle, std::string> from_directory(std::filesystem::path directory);
+    static Result<JournalInstanceHandle> from_directory(std::filesystem::path directory);
 
     JournalInstance(const JournalInstance &) = delete;
     JournalInstance(JournalInstance &&) noexcept = delete;

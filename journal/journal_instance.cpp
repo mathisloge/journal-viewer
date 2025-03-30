@@ -27,11 +27,11 @@ class JournalDirectoryHandle : public JournalInstance
     std::filesystem::path file_or_directory_;
 };
 
-std::expected<JournalInstanceHandle, std::string> JournalInstance::from_directory(std::filesystem::path directory)
+Result<JournalInstanceHandle> JournalInstance::from_directory(std::filesystem::path directory)
 {
     if (not std::filesystem::is_directory(directory))
     {
-        return std::unexpected(std::format("{} is not a directory.", directory.c_str()));
+        return make_error_result(std::format("{} is not a directory.", directory.c_str()));
     }
     return JournalInstanceHandle{std::make_shared<JournalDirectoryHandle>(std::move(directory))};
 }

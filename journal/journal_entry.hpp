@@ -6,7 +6,10 @@
 
 namespace jrn
 {
-enum class Priority
+inline constexpr std::string_view kSystemdUnitKey = "_SYSTEMD_UNIT";
+inline constexpr std::string_view kPriorityKey = "PRIORITY";
+
+enum class Priority : std::uint8_t
 {
     emergency = 0,
     alert,
@@ -31,4 +34,5 @@ struct JournalEntry
 
 JournalEntry fetch_entry(sd_journal *journal);
 
+std::string get_systemd_unit(sd_journal *journal);
 } // namespace jrn

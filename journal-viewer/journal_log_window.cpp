@@ -3,17 +3,54 @@
 #include <fmt/format.h>
 #include <imgui.h>
 
+using namespace std::literals;
+
 namespace jrn
 {
 namespace
 {
 void draw_entry(const JournalEntry &entry);
+constexpr auto priority_color(Priority priority)
+{
+    switch (priority)
+    {
+    case Priority::emergency:
+        return IM_COL32(112, 2, 147, 255);
+    case Priority::alert:
+        return IM_COL32(147, 2, 105, 255);
+    case Priority::critical:
+        return IM_COL32(147, 2, 2, 255);
+    case Priority::error:
+        return IM_COL32(143, 21, 0, 255);
+    case Priority::warning:
+        return IM_COL32(138, 83, 0, 255);
+    case Priority::notice:
+        return IM_COL32(54, 106, 12, 255);
+    case Priority::info:
+        return IM_COL32(0, 96, 138, 255);
+    case Priority::debug:
+        return IM_COL32(58, 77, 85, 255);
+    }
+    return IM_COL32(0, 0, 0, 255);
 }
+} // namespace
 
-JournalLogWindow::JournalLogWindow(std::string title, JournalInstanceHandle handle)
+JournalLogWindow::JournalLogWindow(std::string title, JournalInstanceHandle handle, const JournalInfo &info)
     : title_{std::move(title)}
     , manager_{handle}
+    , info_{info}
 {}
+
+void JournalLogWindow::draw_priority_filter(std::string_view title, const Priority priority)
+{
+    bool enabled{manager_.is_priority_enabled(priority)};
+    ImGui::PushStyleColor(ImGuiCol_FrameBg, priority_color(priority));
+    if (ImGui::Checkbox(title.data(), &enabled))
+    {
+        enabled ? manager_.enable_priority(priority) : manager_.disable_priority(priority);
+    }
+    ImGui::PopStyleColor();
+}
 
 void JournalLogWindow::draw()
 {
@@ -26,37 +63,30 @@ void JournalLogWindow::draw()
     // Menu bar
     if (ImGui::BeginMenuBar())
     {
-        if (ImGui::BeginMenu("File"))
+        if (ImGui::BeginMenu("Priorities"))
         {
-            if (ImGui::MenuItem("Add 10000 items"))
-            {
-            }
-            ImGui::Separator();
-            if (ImGui::MenuItem("Close", NULL, false, open_))
-            {
-                open_ = false;
-            }
+            draw_priority_filter("Emergency"sv, Priority::emergency);
+            draw_priority_filter("Alert"sv, Priority::alert);
+            draw_priority_filter("Critical"sv, Priority::critical);
+            draw_priority_filter("Error"sv, Priority::error);
+            draw_priority_filter("Warning"sv, Priority::warning);
+            draw_priority_filter("Notice"sv, Priority::notice);
+            draw_priority_filter("Info"sv, Priority::info);
+            draw_priority_filter("Debug"sv, Priority::debug);
             ImGui::EndMenu();
         }
-        if (ImGui::BeginMenu("Options"))
+        if (ImGui::BeginMenu("Systemd-Units"))
         {
-            ImGui::PushItemWidth(ImGui::GetFontSize() * 10);
-
-            // ImGui::SeparatorText("Contents");
-            // ImGui::Checkbox("Show Type Overlay", &ShowTypeOverlay);
-            // ImGui::Checkbox("Allow Sorting", &AllowSorting);
-            //
-            // ImGui::SeparatorText("Selection Behavior");
-            // ImGui::Checkbox("Allow dragging unselected item", &AllowDragUnselected);
-            // ImGui::Checkbox("Allow box-selection", &AllowBoxSelect);
-            //
-            // ImGui::SeparatorText("Layout");
-            // ImGui::SliderFloat("Icon Size", &IconSize, 16.0f, 128.0f, "%.0f");
-            // ImGui::SameLine();
-            // ImGui::SliderInt("Icon Spacing", &IconSpacing, 0, 32);
-            // ImGui::SliderInt("Icon Hit Spacing", &IconHitSpacing, 0, 32);
-            // ImGui::Checkbox("Stretch Spacing", &StretchSpacing);
-            ImGui::PopItemWidth();
+            for (auto &&unit : info_.systemd_units())
+            {
+                ImGui::PushID(&unit);
+                bool enabled{manager_.has_filter_systemd_unit(unit)};
+                if (ImGui::Checkbox(unit.c_str(), &enabled))
+                {
+                    enabled ? manager_.add_filter_systemd_unit(unit) : manager_.remove_filter_systemd_unit(unit);
+                }
+                ImGui::PopID();
+            }
             ImGui::EndMenu();
         }
         ImGui::EndMenuBar();
@@ -86,28 +116,7 @@ namespace
 void draw_entry(const JournalEntry &entry)
 {
     ImGui::TableNextRow();
-    ImGui::TableSetBgColor(ImGuiTableBgTarget_RowBg0, [prio = entry.priority] {
-        switch (prio)
-        {
-        case jrn::Priority::emergency:
-            return IM_COL32(112, 2, 147, 255);
-        case jrn::Priority::alert:
-            return IM_COL32(147, 2, 105, 255);
-        case jrn::Priority::critical:
-            return IM_COL32(147, 2, 2, 255);
-        case jrn::Priority::error:
-            return IM_COL32(143, 21, 0, 255);
-        case jrn::Priority::warning:
-            return IM_COL32(138, 83, 0, 255);
-        case jrn::Priority::notice:
-            return IM_COL32(54, 106, 12, 255);
-        case jrn::Priority::info:
-            return IM_COL32(0, 96, 138, 255);
-        case jrn::Priority::debug:
-            return IM_COL32(58, 77, 85, 255);
-        }
-        return IM_COL32(0, 0, 0, 255);
-    }());
+    ImGui::TableSetBgColor(ImGuiTableBgTarget_RowBg0, priority_color(entry.priority));
     const auto formatted_time{fmt::format("{}", entry.utc)};
     ImGui::TableSetColumnIndex(0);
     ImGui::TextUnformatted(formatted_time.c_str());

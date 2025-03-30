@@ -2,6 +2,7 @@
 #include <imgui.h>
 #include <imgui_impl_sdl3.h>
 #include <imgui_impl_sdlrenderer3.h>
+#include "file_browser.hpp"
 #include "journal_instance.hpp"
 
 namespace jrn
@@ -34,13 +35,14 @@ void AppState::draw()
                 if (journal_handle.has_value())
                 {
                     handle_ = std::move(journal_handle.value());
-                    log_windows_.emplace_back(std::make_unique<JournalLogWindow>("LogView", handle_));
+                    journal_info_ = std::make_unique<JournalInfo>(handle_);
+                    main_log_window_ = std::make_unique<JournalLogWindow>("Main log window", handle_, *journal_info_);
                 }
             }
             if (handle_.valid() and ImGui::MenuItem("New log window", "Ctrl-F"))
             {
-                log_windows_.emplace_back(
-                    std::make_unique<JournalLogWindow>(std::format("LogView##{}", log_windows_.size()), handle_));
+                log_windows_.emplace_back(std::make_unique<JournalLogWindow>(
+                    std::format("LogView##{}", log_windows_.size()), handle_, *journal_info_));
             }
 
             ImGui::EndMenu();
@@ -58,6 +60,11 @@ void AppState::draw()
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0F / io.Framerate, io.Framerate);
     }
     ImGui::End();
+
+    if (main_log_window_ != nullptr) [[likely]]
+    {
+        main_log_window_->draw();
+    }
 
     for (auto &&win : log_windows_)
     {

@@ -1,8 +1,8 @@
 #pragma once
-#include <expected>
 #include <filesystem>
+#include <result.hpp>
 
 namespace jrn
 {
-std::expected<std::filesystem::path, std::string> choose_directory();
+Result<std::filesystem::path> choose_directory();
 } // namespace jrn

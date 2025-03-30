@@ -1,8 +1,6 @@
 #include "journal_entry.hpp"
 #include <charconv>
 
-using std::operator""sv;
-
 namespace jrn
 {
 namespace
@@ -17,11 +15,16 @@ JournalEntry fetch_entry(sd_journal *journal)
     JournalEntry entry;
 
     entry.message = get_data(journal, "MESSAGE");
-    entry.unit = get_data(journal, "_SYSTEMD_UNIT");
+    entry.unit = get_systemd_unit(journal);
     entry.priority = get_priority(journal);
     entry.utc = get_realtime(journal);
 
     return entry;
+}
+
+std::string get_systemd_unit(sd_journal *journal)
+{
+    return std::string{get_data(journal, kSystemdUnitKey)};
 }
 
 namespace
@@ -42,8 +45,8 @@ std::string_view get_data(sd_journal *journal, std::string_view field)
 
 Priority get_priority(sd_journal *journal)
 {
-    auto priority_str = get_data(journal, "PRIORITY"sv);
-    int value = 0;
+    auto priority_str = get_data(journal, kPriorityKey);
+    std::uint8_t value = 0;
     std::from_chars(priority_str.begin(), priority_str.end(), value);
     return Priority{value};
 }

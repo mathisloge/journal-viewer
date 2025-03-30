@@ -1,5 +1,5 @@
 #pragma once
-#include "file_browser.hpp"
+#include <journal_info.hpp>
 #include "journal_instance_handle.hpp"
 #include "journal_log_window.hpp"
 #include "sdl_pointers.hpp"
@@ -27,6 +27,8 @@ class AppState final
     SdlRenderer renderer_;
     SdlWindow window_;
     JournalInstanceHandle handle_;
+    std::unique_ptr<JournalInfo> journal_info_;
+    std::unique_ptr<JournalLogWindow> main_log_window_;
     std::vector<std::unique_ptr<JournalLogWindow>> log_windows_;
 };
 } // namespace jrn

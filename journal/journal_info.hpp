@@ -1,6 +1,8 @@
 #pragma once
 #include <string>
 #include <unordered_set>
+#include "details/sd_journal.hpp"
+#include "journal_instance_handle.hpp"
 
 namespace jrn
 {
@@ -11,6 +13,15 @@ namespace jrn
  */
 class JournalInfo
 {
-    std::unordered_set<std::string> units_;
+  public:
+    using SystemdUnits = std::unordered_set<std::string>;
+
+  public:
+    explicit JournalInfo(JournalInstanceHandle handle);
+    const SystemdUnits &systemd_units() const noexcept;
+
+  private:
+    systemd::Journal journal_;
+    SystemdUnits systemd_units_;
 };
 } // namespace jrn
