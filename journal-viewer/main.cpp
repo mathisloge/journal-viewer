@@ -72,7 +72,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char **argv)
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;  // Enable Gamepad Controls
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;     // Enable Docking
 
-    io.Fonts->AddFontFromFileTTF("/home/mlogemann/dev/journal-viewer/journal-viewer/SourceCodePro-Regular.ttf", 15.0f);
+    io.Fonts->AddFontFromFileTTF("/home/mlogemann/dev/journal-viewer/journal-viewer/SourceCodePro-Regular.ttf", 16.0f);
     io.Fonts->Build();
 
     ImGui::StyleColorsDark();
@@ -136,4 +136,7 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
 void SDL_AppQuit(void * /*appstate*/, SDL_AppResult /*result*/)
 {
     NFD::Quit();
+    ImGui_ImplSDLRenderer3_Shutdown();
+    ImGui_ImplSDL3_Shutdown();
+    ImGui::DestroyContext();
 }

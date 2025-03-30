@@ -1,7 +1,5 @@
 #include "app_state.hpp"
 #include <imgui.h>
-#include <imgui_impl_sdl3.h>
-#include <imgui_impl_sdlrenderer3.h>
 #include "file_browser.hpp"
 #include "journal_instance.hpp"
 
@@ -12,12 +10,7 @@ AppState::AppState(SdlRenderer renderer, SdlWindow window)
     , window_{std::move(window)}
 {}
 
-AppState::~AppState()
-{
-    ImGui_ImplSDLRenderer3_Shutdown();
-    ImGui_ImplSDL3_Shutdown();
-    ImGui::DestroyContext();
-}
+AppState::~AppState() = default;
 
 void AppState::draw()
 {
