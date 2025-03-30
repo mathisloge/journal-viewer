@@ -29,7 +29,17 @@ function(fetch_dependencies)
         GIT_TAG        a1a401062819beb8c3da84518ab1fe7de88632db
         FIND_PACKAGE_ARGS
     )
-    FetchContent_MakeAvailable(fmt nfd quill)
+
+    FetchContent_Declare(
+        cmakerc
+        GIT_REPOSITORY https://github.com/vector-of-bool/cmrc
+        GIT_TAG        952ffddba731fc110bd50409e8d2b8a06abbd237
+        FIND_PACKAGE_ARGS
+    )
+
+    FetchContent_MakeAvailable(fmt nfd quill cmakerc)
+
+
 
     if(BUILD_TESTING)
         set(CATCH_INSTALL_DOCS OFF)

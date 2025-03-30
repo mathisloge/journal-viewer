@@ -3,6 +3,7 @@
     "dependencies": [
         "sdl3",
         "cli11",
+        "cmakerc",
         "fmt",
         "quill",
         "libsystemd",

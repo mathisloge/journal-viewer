@@ -1,14 +1,27 @@
 #include "app_state.hpp"
+#include <cmrc/cmrc.hpp>
 #include <imgui.h>
 #include "file_browser.hpp"
 #include "journal_instance.hpp"
+CMRC_DECLARE(jrn);
 
 namespace jrn
 {
 AppState::AppState(SdlRenderer renderer, SdlWindow window)
     : renderer_{std::move(renderer)}
     , window_{std::move(window)}
-{}
+{
+    auto embedded_fs = cmrc::jrn::get_filesystem();
+
+    ImGuiIO &io = ImGui::GetIO();
+    // imgui takes ownership
+    auto font_src = embedded_fs.open("SourceCodePro-Regular.ttf");
+    uint8_t *raw_font = new uint8_t[font_src.size()]; // NOLINT
+    std::copy(font_src.begin(), font_src.end(), raw_font);
+    io.Fonts->AddFontFromMemoryTTF(static_cast<void *>(raw_font), font_src.size(), 16.0F);
+
+    io.Fonts->Build();
+}
 
 AppState::~AppState() = default;
 

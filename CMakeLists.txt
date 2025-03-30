@@ -28,6 +28,7 @@ find_package(SDL3 CONFIG REQUIRED)
 find_package(quill CONFIG REQUIRED)
 find_package(nfd CONFIG REQUIRED)
 find_package(imgui CONFIG REQUIRED)
+find_package(CMakeRC CONFIG REQUIRED)
 
 add_subdirectory(journal)
 add_subdirectory(journal-viewer)

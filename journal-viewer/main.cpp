@@ -67,13 +67,9 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char **argv)
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO &io = ImGui::GetIO();
-    (void)io;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;  // Enable Gamepad Controls
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;     // Enable Docking
-
-    io.Fonts->AddFontFromFileTTF("/home/mlogemann/dev/journal-viewer/journal-viewer/SourceCodePro-Regular.ttf", 16.0f);
-    io.Fonts->Build();
 
     ImGui::StyleColorsDark();
 
