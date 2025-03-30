@@ -38,4 +38,5 @@ add_subdirectory(journal-viewer)
 
 
 install(TARGETS journal-viewer)
+set(CPACK_PACKAGE_CONTACT "mathisloge <mathisloge@tuta.io>")
 include(CPack)
