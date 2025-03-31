@@ -30,7 +30,7 @@ jobs:
           path: vcpkg
   
       - name: Install system dependencies
-        run: sudo apt install libltdl-dev libx11-dev libxft-dev libxext-dev gcc-13 g++-13
+        run: sudo apt install libltdl-dev libx11-dev libxft-dev libxext-dev
   
       - name: Run workflow
         run: cmake --workflow ci
