@@ -31,6 +31,14 @@ jobs:
   
       - name: Install system dependencies
         run: sudo apt install libltdl-dev libx11-dev libxft-dev libxext-dev
+
+      - name: Nur auf Ubuntu 22.04 ausführen
+        if: matrix.os == 'ubuntu-22.04'
+        run:
+          sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+          sudo apt-get update -y
+          sudo apt-get install gcc-13 g++-13
+
   
       - name: Run workflow
         run: cmake --workflow ci
