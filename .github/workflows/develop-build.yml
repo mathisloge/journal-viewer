@@ -32,7 +32,7 @@ jobs:
       - name: Install system dependencies
         run: sudo apt install libltdl-dev libx11-dev libxft-dev libxext-dev
 
-      - name: Nur auf Ubuntu 22.04 ausführen
+      - name: Install system dependencies for ubuntu-22.04
         if: matrix.os == 'ubuntu-22.04'
         run:
           sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
