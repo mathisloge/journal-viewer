@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Mathis Logemann <mathisloge@tuta.io>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "journal_log_window.hpp"
 #include <fmt/chrono.h>
 #include <fmt/format.h>

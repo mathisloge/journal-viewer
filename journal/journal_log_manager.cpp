@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Mathis Logemann <mathisloge@tuta.io>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "journal_log_manager.hpp"
 #include <utility>
 #include "journal_instance.hpp"
@@ -66,8 +70,7 @@ void JournalLogManager::add_priority_match(Priority priority)
     sd_journal_add_match(journal_.get(), prio_filter.c_str(), prio_filter.size());
 }
 
-
-bool JournalLogManager::match_dynamic_filter(const JournalEntry& entry) const
+bool JournalLogManager::match_dynamic_filter(const JournalEntry &entry) const
 {
     return false;
 }

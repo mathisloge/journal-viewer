@@ -16,3 +16,12 @@ repos:
     hooks:
       - id: clang-format
         types_or: [c++, c, proto]
+
+  - repo: local
+    hooks:
+      - id: reuse-annotate
+        name: reuse-annotate
+        entry: reuse annotate --copyright="Mathis Logemann <mathisloge@tuta.io>" --license="GPL-3.0-or-later"
+        types_or: [c++]
+        pass_filenames: true
+        language: system

@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Mathis Logemann <mathisloge@tuta.io>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #define SDL_MAIN_USE_CALLBACKS
 
 #include <SDL3/SDL_main.h>

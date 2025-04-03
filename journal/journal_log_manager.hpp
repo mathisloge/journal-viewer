@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Mathis Logemann <mathisloge@tuta.io>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #pragma once
 #include <unordered_set>
 #include <utility>
@@ -47,7 +51,8 @@ class JournalLogManager
     void for_each(std::uint64_t begin, const std::uint64_t end, auto &&predicate)
     {
         cache_.seek_to_index(begin);
-        while (begin < end) {
+        while (begin < end)
+        {
             const auto entry = fetch_entry(journal_.get());
             if (not match_dynamic_filter(entry))
             {
@@ -69,15 +74,16 @@ class JournalLogManager
   private:
     void apply_current_matches();
     void add_priority_match(Priority priority);
-   
+
     /**
-     * @brief Applies dynamic filters which cannot be applied to systemd filters. E.g. regex message filters, excluding messages etc.
-     * 
+     * @brief Applies dynamic filters which cannot be applied to systemd filters. E.g. regex message filters, excluding
+     * messages etc.
+     *
      * @param entry the entry to match
-     * @return true if any filter applies 
+     * @return true if any filter applies
      * @return false if non of the filter applies
      */
-    bool match_dynamic_filter(const JournalEntry& entry) const;
+    bool match_dynamic_filter(const JournalEntry &entry) const;
 
   private:
     systemd::Journal journal_;

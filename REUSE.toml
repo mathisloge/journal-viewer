@@ -1,0 +1,64 @@
+version = 1
+SPDX-PackageName = "journal-viewer"
+SPDX-PackageSupplier = "Mathis Logemann"
+SPDX-PackageDownloadLocation = "https://github.com/mathisloge/journal-viewer"
+
+[[annotations]]
+path = "cmake/**"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2025 Mathis Logemann <mathisloge@tuta.io>"
+SPDX-License-Identifier = "GPL-3.0-or-later"
+
+[[annotations]]
+path = "tests/**"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2025 Mathis Logemann <mathisloge@tuta.io>"
+SPDX-License-Identifier = "GPL-3.0-or-later"
+
+[[annotations]]
+path = ".github/**"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2025 Mathis Logemann <mathisloge@tuta.io>"
+SPDX-License-Identifier = "GPL-3.0-or-later"
+
+[[annotations]]
+path = "*.yaml"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2025 Mathis Logemann <mathisloge@tuta.io>"
+SPDX-License-Identifier = "GPL-3.0-or-later"
+
+[[annotations]]
+path = ".clang-format"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2025 Mathis Logemann <mathisloge@tuta.io>"
+SPDX-License-Identifier = "GPL-3.0-or-later"
+
+[[annotations]]
+path = "**/CMakeLists.txt"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2025 Mathis Logemann <mathisloge@tuta.io>"
+SPDX-License-Identifier = "GPL-3.0-or-later"
+
+[[annotations]]
+path = ".gitignore"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2025 Mathis Logemann <mathisloge@tuta.io>"
+SPDX-License-Identifier = "GPL-3.0-or-later"
+
+[[annotations]]
+path = ".clang-tidy"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2025 Mathis Logemann <mathisloge@tuta.io>"
+SPDX-License-Identifier = "GPL-3.0-or-later"
+
+[[annotations]]
+path = ".clangd"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2025 Mathis Logemann <mathisloge@tuta.io>"
+SPDX-License-Identifier = "GPL-3.0-or-later"
+
+[[annotations]]
+path = "CMakePresets.json"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2025 Mathis Logemann <mathisloge@tuta.io>"
+SPDX-License-Identifier = "GPL-3.0-or-later"

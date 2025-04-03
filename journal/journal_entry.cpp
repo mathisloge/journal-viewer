@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Mathis Logemann <mathisloge@tuta.io>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "journal_entry.hpp"
 #include <charconv>
 
@@ -14,7 +18,7 @@ JournalEntry fetch_entry(sd_journal *journal)
 {
     JournalEntry entry;
 
-    char* cursor{};
+    char *cursor{};
     sd_journal_get_cursor(journal, &cursor);
     entry.cursor = std::move(cursor);
     entry.message = get_data(journal, "MESSAGE");
