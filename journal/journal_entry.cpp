@@ -14,6 +14,9 @@ JournalEntry fetch_entry(sd_journal *journal)
 {
     JournalEntry entry;
 
+    char* cursor{};
+    sd_journal_get_cursor(journal, &cursor);
+    entry.cursor = std::move(cursor);
     entry.message = get_data(journal, "MESSAGE");
     entry.unit = get_systemd_unit(journal);
     entry.priority = get_priority(journal);

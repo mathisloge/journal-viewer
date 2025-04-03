@@ -13,11 +13,13 @@ struct JournalLogWindow
 
   private:
     void draw_priority_filter(std::string_view title, Priority priority);
+    void draw_entry(const JournalEntry &entry);
 
   private:
     std::string title_;
     bool open_{true};
     const JournalInfo &info_;
     JournalLogManager manager_;
+    std::string selected_cursor_;
 };
 } // namespace jrn

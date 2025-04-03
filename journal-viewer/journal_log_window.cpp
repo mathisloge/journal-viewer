@@ -9,7 +9,6 @@ namespace jrn
 {
 namespace
 {
-void draw_entry(const JournalEntry &entry);
 constexpr auto priority_color(Priority priority)
 {
     switch (priority)
@@ -104,26 +103,43 @@ void JournalLogWindow::draw()
         clipper.Begin(manager_.min_count_entries());
         while (clipper.Step())
         {
-            manager_.for_each(clipper.DisplayStart, clipper.DisplayEnd, draw_entry);
+            manager_.for_each(clipper.DisplayStart, clipper.DisplayEnd, [this](auto &&entry) { draw_entry(entry); });
         }
         ImGui::EndTable();
     }
     ImGui::End();
 }
 
-namespace
-{
-void draw_entry(const JournalEntry &entry)
+void JournalLogWindow::draw_entry(const JournalEntry &entry)
 {
     ImGui::TableNextRow();
+    ImGui::PushID(&entry);
     ImGui::TableSetBgColor(ImGuiTableBgTarget_RowBg0, priority_color(entry.priority));
     const auto formatted_time{fmt::format("{}", entry.utc)};
     ImGui::TableSetColumnIndex(0);
-    ImGui::TextUnformatted(formatted_time.c_str());
+    const bool selected{selected_cursor_ == entry.cursor};
+    const ImGuiSelectableFlags flags = selected ? ImGuiSelectableFlags_Highlight : ImGuiSelectableFlags_None;
+    ImGui::Selectable(formatted_time.c_str(), false, flags | ImGuiSelectableFlags_SpanAllColumns);
+    if (ImGui::BeginPopupContextItem())
+    {
+        selected_cursor_ = entry.cursor;
+        if (ImGui::Selectable("Copy message"))
+        {
+            ImGui::SetClipboardText(entry.message.c_str());
+        }
+        if (ImGui::Selectable("Exclude message"))
+        {
+        }
+        ImGui::EndPopup();
+    }
+    if (not ImGui::IsPopupOpen(nullptr, ImGuiPopupFlags_AnyPopupId))
+    {
+        selected_cursor_.clear();
+    }
     ImGui::TableSetColumnIndex(1);
     ImGui::TextUnformatted(entry.unit.c_str());
     ImGui::TableSetColumnIndex(2);
     ImGui::TextUnformatted(entry.message.c_str());
+    ImGui::PopID();
 }
-} // namespace
 } // namespace jrn

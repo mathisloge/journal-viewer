@@ -66,6 +66,12 @@ void JournalLogManager::add_priority_match(Priority priority)
     sd_journal_add_match(journal_.get(), prio_filter.c_str(), prio_filter.size());
 }
 
+
+bool JournalLogManager::match_dynamic_filter(const JournalEntry& entry) const
+{
+    return false;
+}
+
 void JournalLogManager::apply_current_matches()
 {
     sd_journal_flush_matches(journal_.get());

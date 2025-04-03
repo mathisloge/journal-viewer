@@ -44,12 +44,16 @@ class JournalLogManager
         return details::is_flag_set(priority, enabled_priorities_);
     }
 
-    void for_each(std::uint64_t begin, std::uint64_t end, auto &&predicate)
+    void for_each(std::uint64_t begin, const std::uint64_t end, auto &&predicate)
     {
         cache_.seek_to_index(begin);
-        for (std::uint64_t i = begin; i < end; ++i)
-        {
-            predicate(fetch_entry(journal_.get()));
+        while (begin < end) {
+            const auto entry = fetch_entry(journal_.get());
+            if (not match_dynamic_filter(entry))
+            {
+                predicate(entry);
+                begin++;
+            }
             if (sd_journal_next(journal_.get()) == 0)
             {
                 break;
@@ -65,11 +69,19 @@ class JournalLogManager
   private:
     void apply_current_matches();
     void add_priority_match(Priority priority);
+   
+    /**
+     * @brief Applies dynamic filters which cannot be applied to systemd filters. E.g. regex message filters, excluding messages etc.
+     * 
+     * @param entry the entry to match
+     * @return true if any filter applies 
+     * @return false if non of the filter applies
+     */
+    bool match_dynamic_filter(const JournalEntry& entry) const;
 
   private:
     systemd::Journal journal_;
     JournalCache cache_{journal_.get()};
-    std::string cursor_;
     std::uint8_t enabled_priorities_{std::numeric_limits<std::uint8_t>::max()};
     std::unordered_set<std::string> enabled_systemd_units_;
 };
