@@ -1,21 +1,21 @@
 {
-    "name": "quite",
-    "dependencies": [
-        "sdl3",
-        "cli11",
-        "cmakerc",
-        "fmt",
-        "quill",
-        "libsystemd",
-        "nativefiledialog-extended",
-        {
-            "name": "imgui",
-            "features": [
-                "freetype",
-                "docking-experimental",
-                "sdl3-binding",
-                "sdl3-renderer-binding"
-            ]
-        }
-    ]
+  "name": "quite",
+  "dependencies": [
+    "cli11",
+    "cmakerc",
+    "fmt",
+    {
+      "name": "imgui",
+      "features": [
+        "docking-experimental",
+        "freetype",
+        "sdl3-binding",
+        "sdl3-renderer-binding"
+      ]
+    },
+    "libsystemd",
+    "nativefiledialog-extended",
+    "quill",
+    "sdl3"
+  ]
 }

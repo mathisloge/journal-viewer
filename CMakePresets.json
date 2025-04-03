@@ -28,7 +28,7 @@
         {
             "name": "vcpkg",
             "hidden": true,
-            "toolchainFile": "/home/mlogemann/dev/vcpkg/scripts/buildsystems/vcpkg.cmake"
+            "toolchainFile": "$penv{VCPKG_HOME}/scripts/buildsystems/vcpkg.cmake"
         },
         {
             "name": "debug-build",
