@@ -21,10 +21,13 @@ set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 set(CMAKE_VISIBILITY_INLINES_HIDDEN 1)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
+get_git_head_revision(GIT_REF GIT_SHA)
+
+message(STATUS "XXX ${GIT_REF} ${GIT_SHA}")
+
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(libsystemd REQUIRED IMPORTED_TARGET libsystemd)
-
 
 find_package(fmt CONFIG REQUIRED)
 find_package(SDL3 CONFIG REQUIRED)
@@ -32,6 +35,12 @@ find_package(quill CONFIG REQUIRED)
 find_package(nfd CONFIG REQUIRED)
 find_package(imgui CONFIG REQUIRED)
 find_package(CMakeRC CONFIG REQUIRED)
+
+cmrc_add_resource_library(journal-viewer-resources ALIAS journal::viewer-resources NAMESPACE jrn
+    journal-viewer/SourceCodePro-Regular.ttf
+    LICENSE
+)
+
 
 add_subdirectory(journal)
 add_subdirectory(journal-viewer)

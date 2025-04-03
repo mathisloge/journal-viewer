@@ -1,5 +1,10 @@
 add_library(journal STATIC)
 add_library(journal::journal ALIAS journal)
+
+
+
+configure_file(version.hpp.in version.hpp @ONLY)
+
 target_compile_features(journal
     PUBLIC cxx_std_23
 )
@@ -22,4 +27,4 @@ target_sources(journal PRIVATE
     journal_cache.hpp
 )
 
-target_include_directories(journal PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(journal PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})

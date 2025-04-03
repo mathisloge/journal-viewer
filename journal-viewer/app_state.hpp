@@ -4,6 +4,7 @@
 
 #pragma once
 #include <journal_info.hpp>
+#include "about_window.hpp"
 #include "journal_instance_handle.hpp"
 #include "journal_log_window.hpp"
 #include "sdl_pointers.hpp"
@@ -30,6 +31,7 @@ class AppState final
   private:
     SdlRenderer renderer_;
     SdlWindow window_;
+    AboutWindow about_;
     JournalInstanceHandle handle_;
     std::unique_ptr<JournalInfo> journal_info_;
     std::unique_ptr<JournalLogWindow> main_log_window_;

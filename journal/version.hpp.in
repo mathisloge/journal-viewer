@@ -1,0 +1,14 @@
+#pragma once
+#include <string_view>
+#include <cstdint>
+
+namespace jrn {
+    inline constexpr std::uint8_t kMajorVersion = @PROJECT_VERSION_MAJOR@;
+    inline constexpr std::uint8_t kMinorVersion = @PROJECT_VERSION_MINOR@;
+    inline constexpr std::uint8_t kPatchVersion = @PROJECT_VERSION_PATCH@;
+    inline constexpr std::string_view kVersion = "@PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@.@PROJECT_VERSION_PATCH@";
+
+    inline constexpr std::string_view kGitRepository = "https://github.com/mathisloge/journal-viewer";
+    inline constexpr std::string_view kGitSha = "@GIT_SHA@";
+    inline constexpr std::string_view kGitRef = "@GIT_REF@";
+}

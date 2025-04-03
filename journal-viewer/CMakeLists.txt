@@ -1,7 +1,3 @@
-cmrc_add_resource_library(journal-viewer-resources ALIAS journal::viewer-resources NAMESPACE jrn
-    SourceCodePro-Regular.ttf
-)
-
 add_executable(journal-viewer main.cpp)
 
 target_link_libraries(journal-viewer PRIVATE
@@ -20,4 +16,6 @@ target_sources(journal-viewer PRIVATE
     app_state.cpp
     file_browser.hpp
     file_browser.cpp
+    about_window.cpp
+    about_window.hpp
 )

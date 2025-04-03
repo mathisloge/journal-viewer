@@ -19,7 +19,7 @@ AppState::AppState(SdlRenderer renderer, SdlWindow window)
 
     ImGuiIO &io = ImGui::GetIO();
     // imgui takes ownership
-    auto font_src = embedded_fs.open("SourceCodePro-Regular.ttf");
+    auto font_src = embedded_fs.open("journal-viewer/SourceCodePro-Regular.ttf");
     uint8_t *raw_font = new uint8_t[font_src.size()]; // NOLINT
     std::copy(font_src.begin(), font_src.end(), raw_font);
     io.Fonts->AddFontFromMemoryTTF(static_cast<void *>(raw_font), font_src.size(), 16.0F);
@@ -57,6 +57,11 @@ void AppState::draw()
 
             ImGui::EndMenu();
         }
+
+        if(ImGui::BeginMenu("Help")) {
+            ImGui::MenuItem("About", NULL, about_.open_handle());
+            ImGui::EndMenu();
+        }
         ImGui::EndMainMenuBar();
     }
 
@@ -70,6 +75,9 @@ void AppState::draw()
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0F / io.Framerate, io.Framerate);
     }
     ImGui::End();
+
+
+    about_.draw();
 
     if (main_log_window_ != nullptr) [[likely]]
     {

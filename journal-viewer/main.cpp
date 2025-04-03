@@ -35,6 +35,12 @@ constexpr jrn::AppState &from_appstate(void *appstate)
 
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char **argv)
 {
+    fmt::println(R"(
+    journal-viewer Copyright (C) 2025 Mathis Logemann
+    This program comes with ABSOLUTELY NO WARRANTY; for details use the about box in the help menu.
+    This is free software, and you are welcome to redistribute it
+    under certain conditions;
+    )");
     quill::Backend::start();
     quill::Logger *logger = quill::Frontend::create_or_get_logger(
         "root", quill::Frontend::create_or_get_sink<quill::ConsoleSink>("sink_id_1"));
