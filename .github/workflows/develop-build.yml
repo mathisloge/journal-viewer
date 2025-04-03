@@ -9,6 +9,16 @@ env:
   VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
   
 jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
+      with:
+        cache: 'pip'
+    - run: pip install -r requirements.txt
+    - uses: pre-commit/action@v3.0.1
+
   build_matrix:
     strategy:
       matrix:
