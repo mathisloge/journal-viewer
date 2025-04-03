@@ -71,6 +71,17 @@
             ]
         },
         {
+            "name": "developer-gcc-vcpkg",
+            "displayName": "Developer gcc (vcpkg)",
+            "inherits": [
+                "common",
+                "use-gcc",
+                "debug-build",
+                "developer",
+                "vcpkg"
+            ]
+        },
+        {
             "name": "ci",
             "displayName": "CI configuration",
             "inherits": [
@@ -91,6 +102,10 @@
             "configurePreset": "developer-gcc"
         },
         {
+            "name": "developer-gcc-vcpkg",
+            "configurePreset": "developer-gcc-vcpkg"
+        },
+        {
             "name": "ci",
             "configurePreset": "ci"
         }
@@ -99,6 +114,10 @@
         {
             "name": "developer-gcc",
             "configurePreset": "developer-gcc"
+        },
+        {
+            "name": "developer-gcc-vcpkg",
+            "configurePreset": "developer-gcc-vcpkg"
         },
         {
             "name": "ci",
