@@ -14,6 +14,9 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-python@v5
+      with:
+        cache: 'pip'
+    - run: pip install -r requirements.txt
     - uses: pre-commit/action@v3.0.1
 
   build_matrix:
