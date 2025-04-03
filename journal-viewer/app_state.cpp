@@ -58,7 +58,8 @@ void AppState::draw()
             ImGui::EndMenu();
         }
 
-        if(ImGui::BeginMenu("Help")) {
+        if (ImGui::BeginMenu("Help"))
+        {
             ImGui::MenuItem("About", NULL, about_.open_handle());
             ImGui::EndMenu();
         }
@@ -75,7 +76,6 @@ void AppState::draw()
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0F / io.Framerate, io.Framerate);
     }
     ImGui::End();
-
 
     about_.draw();
 
