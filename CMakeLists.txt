@@ -23,9 +23,6 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 get_git_head_revision(GIT_REF GIT_SHA)
 
-message(STATUS "XXX ${GIT_REF} ${GIT_SHA}")
-
-
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(libsystemd REQUIRED IMPORTED_TARGET libsystemd)
 
