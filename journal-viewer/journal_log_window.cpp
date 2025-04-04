@@ -18,24 +18,41 @@ constexpr auto priority_color(Priority priority)
 {
     switch (priority)
     {
-    case Priority::emergency:
-        return IM_COL32(112, 2, 147, 255);
-    case Priority::alert:
-        return IM_COL32(147, 2, 105, 255);
-    case Priority::critical:
-        return IM_COL32(147, 2, 2, 255);
-    case Priority::error:
-        return IM_COL32(143, 21, 0, 255);
-    case Priority::warning:
-        return IM_COL32(138, 83, 0, 255);
-    case Priority::notice:
-        return IM_COL32(54, 106, 12, 255);
-    case Priority::info:
-        return IM_COL32(0, 96, 138, 255);
-    case Priority::debug:
-        return IM_COL32(58, 77, 85, 255);
+    case Priority::emergency: {
+        constexpr auto kColor = IM_COL32(112, 2, 147, 255);
+        return kColor;
     }
-    return IM_COL32(0, 0, 0, 255);
+    case Priority::alert: {
+        constexpr auto kColor = IM_COL32(147, 2, 105, 255);
+        return kColor;
+    }
+    case Priority::critical: {
+        constexpr auto kColor = IM_COL32(147, 2, 2, 255);
+        return kColor;
+    }
+    case Priority::error: {
+        constexpr auto kColor = IM_COL32(143, 21, 0, 255);
+        return kColor;
+    }
+    case Priority::warning: {
+        constexpr auto kColor = IM_COL32(138, 83, 0, 255);
+        return kColor;
+    }
+    case Priority::notice: {
+        constexpr auto kColor = IM_COL32(54, 106, 12, 255);
+        return kColor;
+    }
+    case Priority::info: {
+        constexpr auto kColor = IM_COL32(0, 96, 138, 255);
+        return kColor;
+    }
+    case Priority::debug: {
+        constexpr auto kColor = IM_COL32(58, 77, 85, 255);
+        return kColor;
+    }
+    }
+    constexpr auto kUnknownColor = IM_COL32(58, 77, 85, 255);
+    return kUnknownColor;
 }
 } // namespace
 
