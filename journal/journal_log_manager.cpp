@@ -15,6 +15,8 @@ JournalLogManager::JournalLogManager(JournalInstanceHandle handle)
 
 void JournalLogManager::reset_filters()
 {
+    enabled_priorities_ = std::numeric_limits<std::uint8_t>::max();
+    enabled_systemd_units_.clear();
     sd_journal_flush_matches(journal_.get());
     cache_.build_initial_cache(journal_.get());
 }
@@ -95,6 +97,23 @@ void JournalLogManager::apply_current_matches()
     }
 
     cache_.build_initial_cache(journal_.get());
+}
+
+std::uint64_t JournalLogManager::calculate_cursor_index(std::string_view cursor)
+{
+    sd_journal_seek_cursor(journal_.get(), cursor.cbegin());
+    sd_journal_next(journal_.get());
+    const auto nearest_cursor = fetch_cursor(journal_.get());
+    std::uint64_t index = 0;
+    sd_journal_seek_head(journal_.get());
+    for (; sd_journal_next(journal_.get()) > 0; ++index)
+    {
+        if (sd_journal_test_cursor(journal_.get(), nearest_cursor.c_str()) > 0)
+        {
+            break;
+        }
+    }
+    return index;
 }
 
 } // namespace jrn

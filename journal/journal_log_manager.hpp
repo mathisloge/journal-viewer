@@ -71,6 +71,8 @@ class JournalLogManager
         return cache_.cached_count();
     }
 
+    std::uint64_t calculate_cursor_index(std::string_view cursor);
+
   private:
     void apply_current_matches();
     void add_priority_match(Priority priority);

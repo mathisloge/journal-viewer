@@ -36,7 +36,7 @@ struct JournalEntry
     UtcTimepoint utc;
 };
 
-JournalEntry fetch_entry(sd_journal *journal);
-
-std::string get_systemd_unit(sd_journal *journal);
+[[nodiscard]] JournalEntry fetch_entry(sd_journal *journal);
+[[nodiscard]] std::string fetch_cursor(sd_journal *journal);
+[[nodiscard]] std::string get_systemd_unit(sd_journal *journal);
 } // namespace jrn

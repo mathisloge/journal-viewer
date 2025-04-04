@@ -6,6 +6,7 @@
 #include <fmt/chrono.h>
 #include <fmt/format.h>
 #include <imgui.h>
+#include "window_facade.hpp"
 
 using namespace std::literals;
 
@@ -38,8 +39,12 @@ constexpr auto priority_color(Priority priority)
 }
 } // namespace
 
-JournalLogWindow::JournalLogWindow(std::string title, JournalInstanceHandle handle, const JournalInfo &info)
-    : title_{std::move(title)}
+JournalLogWindow::JournalLogWindow(entt::registry &registry,
+                                   std::string title,
+                                   JournalInstanceHandle handle,
+                                   const JournalInfo &info)
+    : registry_{registry}
+    , title_{std::move(title)}
     , manager_{handle}
     , info_{info}
 {}
@@ -48,7 +53,7 @@ void JournalLogWindow::draw_priority_filter(std::string_view title, const Priori
 {
     bool enabled{manager_.is_priority_enabled(priority)};
     ImGui::PushStyleColor(ImGuiCol_FrameBg, priority_color(priority));
-    if (ImGui::Checkbox(title.data(), &enabled))
+    if (ImGui::Checkbox(title.cbegin(), &enabled))
     {
         enabled ? manager_.enable_priority(priority) : manager_.disable_priority(priority);
     }
@@ -94,9 +99,11 @@ void JournalLogWindow::draw()
         }
         ImGui::EndMenuBar();
     }
-    constexpr ImGuiTableFlags table_flags = ImGuiTableFlags_BordersV | ImGuiTableFlags_SizingStretchProp |
-                                            ImGuiTableFlags_Resizable | ImGuiTableFlags_RowBg;
-    if (ImGui::BeginTable("for_sort_specs_only", 3, table_flags, ImGui::GetContentRegionAvail()))
+    constexpr ImGuiTableFlags kTableFlags = ImGuiTableFlags_ScrollY | ImGuiTableFlags_BordersV |
+                                            ImGuiTableFlags_SizingStretchProp | ImGuiTableFlags_Resizable |
+                                            ImGuiTableFlags_RowBg;
+
+    if (ImGui::BeginTable("for_sort_specs_only", 3, kTableFlags, ImGui::GetContentRegionAvail()))
     {
         ImGui::TableSetupColumn("Time");
         ImGui::TableSetupColumn("Unit");
@@ -107,6 +114,11 @@ void JournalLogWindow::draw()
         clipper.Begin(manager_.min_count_entries());
         while (clipper.Step())
         {
+            if (requested_scroll_index_.has_value() and clipper.ItemsHeight > 1.F) [[unlikely]]
+            {
+                ImGui::SetScrollY(clipper.ItemsHeight * static_cast<float>(requested_scroll_index_.value()));
+                requested_scroll_index_ = std::nullopt;
+            }
             manager_.for_each(clipper.DisplayStart, clipper.DisplayEnd, [this](auto &&entry) { draw_entry(entry); });
         }
         ImGui::EndTable();
@@ -123,7 +135,10 @@ void JournalLogWindow::draw_entry(const JournalEntry &entry)
     ImGui::TableSetColumnIndex(0);
     const bool selected{selected_cursor_ == entry.cursor};
     const ImGuiSelectableFlags flags = selected ? ImGuiSelectableFlags_Highlight : ImGuiSelectableFlags_None;
-    ImGui::Selectable(formatted_time.c_str(), false, flags | ImGuiSelectableFlags_SpanAllColumns);
+    if (ImGui::Selectable(formatted_time.c_str(), false, flags | ImGuiSelectableFlags_SpanAllColumns))
+    {
+        registry_.ctx().get<pro::proxy<LogWindowFacade>>()->scroll_to_cursor(entry.cursor);
+    }
     if (ImGui::BeginPopupContextItem())
     {
         selected_cursor_ = entry.cursor;
@@ -145,5 +160,10 @@ void JournalLogWindow::draw_entry(const JournalEntry &entry)
     ImGui::TableSetColumnIndex(2);
     ImGui::TextUnformatted(entry.message.c_str());
     ImGui::PopID();
+}
+
+void JournalLogWindow::scroll_to_cursor(std::string_view cursor)
+{
+    requested_scroll_index_ = manager_.calculate_cursor_index(cursor);
 }
 } // namespace jrn

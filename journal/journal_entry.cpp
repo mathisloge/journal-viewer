@@ -18,9 +18,7 @@ JournalEntry fetch_entry(sd_journal *journal)
 {
     JournalEntry entry;
 
-    char *cursor{};
-    sd_journal_get_cursor(journal, &cursor);
-    entry.cursor = std::move(cursor);
+    entry.cursor = fetch_cursor(journal);
     entry.message = get_data(journal, "MESSAGE");
     entry.unit = get_systemd_unit(journal);
     entry.priority = get_priority(journal);
@@ -34,6 +32,14 @@ std::string get_systemd_unit(sd_journal *journal)
     return std::string{get_data(journal, kSystemdUnitKey)};
 }
 
+std::string fetch_cursor(sd_journal *journal)
+{
+    char *cursor{};
+    sd_journal_get_cursor(journal, &cursor);
+    std::string cursor_str{cursor};
+    free(cursor); // NOLINT
+    return cursor_str;
+}
 namespace
 {
 std::string_view get_data(sd_journal *journal, std::string_view field)
