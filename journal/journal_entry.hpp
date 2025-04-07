@@ -39,4 +39,5 @@ struct JournalEntry
 [[nodiscard]] JournalEntry fetch_entry(sd_journal *journal);
 [[nodiscard]] std::string fetch_cursor(sd_journal *journal);
 [[nodiscard]] std::string get_systemd_unit(sd_journal *journal);
+[[nodiscard]] std::string_view extract_field_data(const void *data, size_t length);
 } // namespace jrn

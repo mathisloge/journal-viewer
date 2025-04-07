@@ -40,13 +40,9 @@ std::string fetch_cursor(sd_journal *journal)
     free(cursor); // NOLINT
     return cursor_str;
 }
-namespace
+
+std::string_view extract_field_data(const void *data, size_t length)
 {
-std::string_view get_data(sd_journal *journal, std::string_view field)
-{
-    const void *data{};
-    size_t length{};
-    std::ignore = sd_journal_get_data(journal, field.begin(), &data, &length);
     std::string_view data_str{static_cast<const char *>(data), length};
     const auto pos_prefix = data_str.find_first_of('=');
     if (pos_prefix != std::string_view::npos)
@@ -54,6 +50,16 @@ std::string_view get_data(sd_journal *journal, std::string_view field)
         data_str = data_str.substr(pos_prefix + 1);
     }
     return data_str;
+}
+
+namespace
+{
+std::string_view get_data(sd_journal *journal, std::string_view field)
+{
+    const void *data{};
+    size_t length{};
+    std::ignore = sd_journal_get_data(journal, field.begin(), &data, &length);
+    return extract_field_data(data, length);
 }
 
 Priority get_priority(sd_journal *journal)
