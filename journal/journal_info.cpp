@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "journal_info.hpp"
-#include "fmt/base.h"
 #include "journal_entry.hpp"
 #include "journal_instance.hpp"
 
@@ -20,8 +19,6 @@ JournalInfo::JournalInfo(JournalInstanceHandle handle)
     size_t length{};
     SD_JOURNAL_FOREACH_UNIQUE(journal_.get(), data, length)
     {
-
-        fmt::println("test  {}", extract_field_data(data, length));
         systemd_units_.emplace(extract_field_data(data, length));
     }
 }
