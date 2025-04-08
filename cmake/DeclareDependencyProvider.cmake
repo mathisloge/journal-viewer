@@ -23,6 +23,21 @@ macro(journal_provide_dependency method dep_name)
         BINARY_DIR "${imgui_BINARY_DIR}"
       )
     endif()
+  elseif("${dep_name}" MATCHES "^(asio)$")
+    list(APPEND mycomp_provider_args ${method} ${dep_name})
+    FetchContent_MakeAvailable(asio)
+    list(POP_BACK mycomp_provider_args dep_name method)
+    if("${method}" STREQUAL "FIND_PACKAGE")
+      set(${dep_name}_FOUND TRUE)
+      add_library(asio_fetched INTERFACE)
+      add_library(asio::asio ALIAS asio_fetched)
+      target_include_directories(asio_fetched INTERFACE "$<BUILD_INTERFACE:${asio_SOURCE_DIR}>")
+    elseif(NOT "${dep_name}" STREQUAL "asio")
+      FetchContent_SetPopulated(${dep_name}
+        SOURCE_DIR "${imgui_SOURCE_DIR}"
+        BINARY_DIR "${imgui_BINARY_DIR}"
+      )
+    endif()
   endif()
 endmacro()
 cmake_language(
