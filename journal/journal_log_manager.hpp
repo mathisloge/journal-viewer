@@ -8,6 +8,7 @@
 #include "details/sd_journal.hpp"
 #include "journal_cache.hpp"
 #include "journal_entry.hpp"
+#include "lru_cache.hpp"
 #include "journal_instance_handle.hpp"
 
 namespace jrn
@@ -47,8 +48,17 @@ class JournalLogManager
     {
         return details::is_flag_set(priority, enabled_priorities_);
     }
-
     void for_each(std::uint64_t begin, const std::uint64_t end, auto &&predicate)
+    {
+        while (begin < end)
+        {
+            const auto entry = entry_cache_.get_entry(begin);
+            predicate(entry);
+            begin++;
+        }
+    }
+
+    void for_each_int(std::uint64_t begin, const std::uint64_t end, auto &&predicate)
     {
         cache_.seek_to_index(begin);
         while (begin < end)
@@ -90,6 +100,7 @@ class JournalLogManager
   private:
     systemd::Journal journal_;
     JournalCache cache_{journal_.get()};
+    LRUCache entry_cache_;
     std::uint8_t enabled_priorities_{std::numeric_limits<std::uint8_t>::max()};
     std::unordered_set<std::string> enabled_systemd_units_;
 };

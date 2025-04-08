@@ -34,6 +34,7 @@ find_package(imgui CONFIG REQUIRED)
 find_package(CMakeRC CONFIG REQUIRED)
 find_package(EnTT CONFIG REQUIRED)
 find_package(proxy CONFIG REQUIRED)
+find_package(asio CONFIG REQUIRED)
 
 cmrc_add_resource_library(journal-viewer-resources ALIAS journal::viewer-resources NAMESPACE jrn
     journal-viewer/SourceCodePro-Regular.ttf

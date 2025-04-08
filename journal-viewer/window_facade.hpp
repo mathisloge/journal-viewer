@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #pragma once
-#include <proxy.h>
+#include <proxy/proxy.h>
 namespace jrn
 {
 

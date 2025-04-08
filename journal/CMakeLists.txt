@@ -14,6 +14,7 @@ target_link_libraries(journal PUBLIC
     quill::quill
     EnTT::EnTT
     msft_proxy
+    asio::asio
 )
 
 target_sources(journal PRIVATE

@@ -3,12 +3,21 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "journal_log_manager.hpp"
+#include <regex>
 #include <utility>
 #include "journal_instance.hpp"
 namespace jrn
 {
 JournalLogManager::JournalLogManager(JournalInstanceHandle handle)
     : journal_{handle->create()}
+    , entry_cache_{[this](auto start) {
+                       cache_.seek_to_index(start);
+                       std::vector<JournalEntry> entries;
+                       for_each_int(start, start + 250, [&entries](auto &&entry) { entries.emplace_back(entry); });
+                       return entries;
+                   },
+                   1000,
+                   250}
 {
     apply_current_matches();
 }
@@ -74,7 +83,8 @@ void JournalLogManager::add_priority_match(Priority priority)
 
 bool JournalLogManager::match_dynamic_filter(const JournalEntry &entry) const
 {
-    return false;
+    std::regex self_regex("REGULAR EXPRESSIONS", std::regex_constants::ECMAScript | std::regex_constants::icase);
+    return std::regex_search(entry.message, self_regex);
 }
 
 void JournalLogManager::apply_current_matches()

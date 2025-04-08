@@ -18,6 +18,7 @@
     "quill",
     "sdl3",
     "entt",
-    "proxy"
+    "proxy",
+    "asio"
   ]
 }
