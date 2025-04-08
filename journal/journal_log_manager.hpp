@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #pragma once
+#include <regex>
 #include <unordered_set>
 #include <utility>
 #include "details/sd_journal.hpp"
@@ -36,6 +37,9 @@ class JournalLogManager
     void enable_priority(Priority priority);
     void disable_priority(Priority priority);
 
+    void update_highlighter_search_text(std::string search_text);
+    void update_exclude_message_regex(std::string exclude_text);
+
     void add_filter_systemd_unit(std::string systemd_unit);
     void remove_filter_systemd_unit(const std::string &systemd_unit);
     [[nodiscard]] bool has_filter_systemd_unit(const std::string &systemd_unit) const
@@ -53,10 +57,11 @@ class JournalLogManager
         cache_.seek_to_index(begin);
         while (begin < end)
         {
-            const auto entry = fetch_entry(journal_.get());
+            auto entry = fetch_entry(journal_.get());
             if (not match_dynamic_filter(entry))
             {
-                predicate(entry);
+                entry.highlight = match_dynamic_highlighter(entry);
+                predicate(begin, entry);
                 begin++;
             }
             if (sd_journal_next(journal_.get()) == 0)
@@ -86,11 +91,14 @@ class JournalLogManager
      * @return false if non of the filter applies
      */
     bool match_dynamic_filter(const JournalEntry &entry) const;
+    bool match_dynamic_highlighter(const JournalEntry &entry) const;
 
   private:
     systemd::Journal journal_;
     JournalCache cache_{journal_.get()};
     std::uint8_t enabled_priorities_{std::numeric_limits<std::uint8_t>::max()};
     std::unordered_set<std::string> enabled_systemd_units_;
+    std::string highlighter_query_;
+    std::optional<std::regex> exclude_query_;
 };
 } // namespace jrn

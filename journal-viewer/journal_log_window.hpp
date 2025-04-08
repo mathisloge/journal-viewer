@@ -22,7 +22,7 @@ struct JournalLogWindow
 
   private:
     void draw_priority_filter(std::string_view title, Priority priority);
-    void draw_entry(const JournalEntry &entry);
+    void draw_entry(int index, const JournalEntry &entry);
 
   private:
     entt::registry &registry_;
@@ -32,5 +32,9 @@ struct JournalLogWindow
     JournalLogManager manager_;
     std::string selected_cursor_;
     std::optional<std::uint64_t> requested_scroll_index_;
+    std::optional<std::uint64_t> past_scroll_index_;
+
+    std::string search_text_;
+    std::string exclude_text_;
 };
 } // namespace jrn

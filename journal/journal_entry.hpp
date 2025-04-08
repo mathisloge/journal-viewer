@@ -32,8 +32,9 @@ struct JournalEntry
     std::string cursor;
     std::string unit;
     std::string message;
-    Priority priority;
+    Priority priority{};
     UtcTimepoint utc;
+    bool highlight{};
 };
 
 [[nodiscard]] JournalEntry fetch_entry(sd_journal *journal);

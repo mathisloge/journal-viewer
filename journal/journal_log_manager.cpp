@@ -43,6 +43,22 @@ void JournalLogManager::disable_priority(Priority priority)
     apply_current_matches();
 }
 
+void JournalLogManager::update_highlighter_search_text(std::string search_text)
+{
+    highlighter_query_ = std::move(search_text);
+}
+
+void JournalLogManager::update_exclude_message_regex(std::string exclude_text)
+{
+    if (exclude_text.empty())
+    {
+        exclude_query_ = std::nullopt;
+        return;
+    }
+    exclude_query_ =
+        std::regex{std::move(exclude_text), std::regex_constants::ECMAScript | std::regex_constants::optimize};
+}
+
 void JournalLogManager::add_filter_systemd_unit(std::string systemd_unit)
 {
     if (not enabled_systemd_units_.emplace(std::move(systemd_unit)).second)
@@ -74,7 +90,20 @@ void JournalLogManager::add_priority_match(Priority priority)
 
 bool JournalLogManager::match_dynamic_filter(const JournalEntry &entry) const
 {
-    return false;
+    if (not exclude_query_.has_value())
+    {
+        return false;
+    }
+    return std::regex_search(entry.message, exclude_query_.value());
+}
+
+bool JournalLogManager::match_dynamic_highlighter(const JournalEntry &entry) const
+{
+    if (highlighter_query_.empty())
+    {
+        return false;
+    }
+    return entry.message.find(highlighter_query_) != std::string::npos;
 }
 
 void JournalLogManager::apply_current_matches()

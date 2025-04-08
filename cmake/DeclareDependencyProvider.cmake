@@ -13,10 +13,15 @@ macro(journal_provide_dependency method dep_name)
         ${imgui_SOURCE_DIR}/imgui_tables.cpp
         ${imgui_SOURCE_DIR}/imgui_widgets.cpp
         ${imgui_SOURCE_DIR}/imgui.cpp
+        ${imgui_SOURCE_DIR}/misc/cpp/imgui_stdlib.cpp
         ${imgui_SOURCE_DIR}/backends/imgui_impl_sdl3.cpp
         ${imgui_SOURCE_DIR}/backends/imgui_impl_sdlrenderer3.cpp
       )
-      target_include_directories(imgui_fetched PUBLIC "$<BUILD_INTERFACE:${imgui_SOURCE_DIR}>" "$<BUILD_INTERFACE:${imgui_SOURCE_DIR}/backends>")
+      target_include_directories(imgui_fetched PUBLIC
+        "$<BUILD_INTERFACE:${imgui_SOURCE_DIR}>"
+        "$<BUILD_INTERFACE:${imgui_SOURCE_DIR}/backends>"
+        "$<BUILD_INTERFACE:${imgui_SOURCE_DIR}/misc/cpp>"
+      )
     elseif(NOT "${dep_name}" STREQUAL "imgui")
       FetchContent_SetPopulated(${dep_name}
         SOURCE_DIR "${imgui_SOURCE_DIR}"
