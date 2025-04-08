@@ -31,7 +31,7 @@ macro(journal_provide_dependency method dep_name)
       set(${dep_name}_FOUND TRUE)
       add_library(asio_fetched INTERFACE)
       add_library(asio::asio ALIAS asio_fetched)
-      target_include_directories(asio_fetched INTERFACE "$<BUILD_INTERFACE:${asio_SOURCE_DIR}>")
+      target_include_directories(asio_fetched INTERFACE "$<BUILD_INTERFACE:${asio_SOURCE_DIR}/asio/include>")
     elseif(NOT "${dep_name}" STREQUAL "asio")
       FetchContent_SetPopulated(${dep_name}
         SOURCE_DIR "${imgui_SOURCE_DIR}"
