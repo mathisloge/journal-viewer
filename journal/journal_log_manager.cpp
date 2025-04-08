@@ -10,14 +10,7 @@ namespace jrn
 {
 JournalLogManager::JournalLogManager(JournalInstanceHandle handle)
     : journal_{handle->create()}
-    , entry_cache_{[this](auto start) {
-                       cache_.seek_to_index(start);
-                       std::vector<JournalEntry> entries;
-                       for_each_int(start, start + 250, [&entries](auto &&entry) { entries.emplace_back(entry); });
-                       return entries;
-                   },
-                   1000,
-                   250}
+    , entry_cache_{1000, 250}
 {
     apply_current_matches();
 }

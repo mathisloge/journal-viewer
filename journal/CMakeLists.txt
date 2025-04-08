@@ -28,6 +28,10 @@ target_sources(journal PRIVATE
     journal_instance.cpp
     journal_instance.hpp
     journal_cache.hpp
+
+    async_journal_log_manager.hpp
+    async_journal_log_manager.cpp
+    async.hpp
 )
 
 target_include_directories(journal PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})

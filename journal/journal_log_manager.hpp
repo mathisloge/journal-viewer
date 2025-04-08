@@ -8,8 +8,8 @@
 #include "details/sd_journal.hpp"
 #include "journal_cache.hpp"
 #include "journal_entry.hpp"
-#include "lru_cache.hpp"
 #include "journal_instance_handle.hpp"
+#include "journal_lru_entry_chunk_cache.hpp"
 
 namespace jrn
 {
@@ -52,7 +52,12 @@ class JournalLogManager
     {
         while (begin < end)
         {
-            const auto entry = entry_cache_.get_entry(begin);
+            const auto entry = entry_cache_.get_entry(begin, [this](auto start) {
+                cache_.seek_to_index(start);
+                std::vector<JournalEntry> entries;
+                for_each_int(start, start + 250, [&entries](auto &&entry) { entries.emplace_back(entry); });
+                return entries;
+            });
             predicate(entry);
             begin++;
         }
@@ -100,7 +105,7 @@ class JournalLogManager
   private:
     systemd::Journal journal_;
     JournalCache cache_{journal_.get()};
-    LRUCache entry_cache_;
+    JournalLruEntryChunkCache entry_cache_;
     std::uint8_t enabled_priorities_{std::numeric_limits<std::uint8_t>::max()};
     std::unordered_set<std::string> enabled_systemd_units_;
 };

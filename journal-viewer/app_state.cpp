@@ -7,6 +7,7 @@
 #include <imgui.h>
 #include "file_browser.hpp"
 #include "journal_instance.hpp"
+#include "journal_log_window.hpp"
 #include "window_facade.hpp"
 
 CMRC_DECLARE(jrn);
@@ -28,6 +29,13 @@ AppState::AppState(SdlRenderer renderer, SdlWindow window)
     io.Fonts->AddFontFromMemoryTTF(static_cast<void *>(raw_font), font_src.size(), 16.0F);
 
     io.Fonts->Build();
+
+    registry_.ctx().emplace<asio::io_context>();
+    io_ctx_thread_ = std::jthread{[this]() {
+        auto &ctx = registry_.ctx().get<asio::io_context>();
+        asio::executor_work_guard<decltype(ctx.get_executor())> work_guard{ctx.get_executor()};
+        ctx.run();
+    }};
 }
 
 AppState::~AppState() = default;

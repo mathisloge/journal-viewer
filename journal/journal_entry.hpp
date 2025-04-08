@@ -29,6 +29,7 @@ using UtcTimepoint = std::chrono::system_clock::time_point;
 
 struct JournalEntry
 {
+    std::uint64_t index;
     std::string cursor;
     std::string unit;
     std::string message;

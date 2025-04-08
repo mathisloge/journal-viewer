@@ -3,6 +3,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "journal_log_window.hpp"
+#include <asio/co_spawn.hpp>
+#include <asio/detached.hpp>
+#include <asio/io_context.hpp>
 #include <fmt/chrono.h>
 #include <fmt/format.h>
 #include <imgui.h>
@@ -62,7 +65,7 @@ JournalLogWindow::JournalLogWindow(entt::registry &registry,
                                    const JournalInfo &info)
     : registry_{registry}
     , title_{std::move(title)}
-    , manager_{handle}
+    , manager_{registry_.ctx().get<asio::io_context>(), handle}
     , info_{info}
 {}
 
@@ -146,7 +149,7 @@ void JournalLogWindow::draw()
 void JournalLogWindow::draw_entry(const JournalEntry &entry)
 {
     ImGui::TableNextRow();
-    ImGui::PushID(&entry);
+    ImGui::PushID(static_cast<int>(entry.index));
     ImGui::TableSetBgColor(ImGuiTableBgTarget_RowBg0, priority_color(entry.priority));
     const auto formatted_time{fmt::format("{}", entry.utc)};
     ImGui::TableSetColumnIndex(0);
@@ -181,6 +184,9 @@ void JournalLogWindow::draw_entry(const JournalEntry &entry)
 
 void JournalLogWindow::scroll_to_cursor(std::string_view cursor)
 {
-    requested_scroll_index_ = manager_.calculate_cursor_index(cursor);
+    asio::co_spawn(
+        registry_.ctx().get<asio::io_context>(),
+        [this, cursor]() -> task<void> { requested_scroll_index_ = co_await manager_.calculate_cursor_index(cursor); },
+        asio::detached);
 }
 } // namespace jrn
