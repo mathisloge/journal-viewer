@@ -10,8 +10,7 @@ target_compile_features(journal
 )
 target_link_libraries(journal PUBLIC
     PkgConfig::libsystemd
-    fmt::fmt
-    quill::quill
+    journal::core
     EnTT::EnTT
     msft_proxy
 )
