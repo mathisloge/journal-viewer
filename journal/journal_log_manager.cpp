@@ -4,7 +4,10 @@
 
 #include "journal_log_manager.hpp"
 #include <utility>
+#include <journal/logger.hpp>
 #include "journal_instance.hpp"
+
+DEFINE_LOGGER(log_manager);
 namespace jrn
 {
 JournalLogManager::JournalLogManager(JournalInstanceHandle handle)
@@ -15,6 +18,7 @@ JournalLogManager::JournalLogManager(JournalInstanceHandle handle)
 
 void JournalLogManager::reset_filters()
 {
+    QUILL_LOG_DEBUG(l_log_manager(), "reset filters");
     enabled_priorities_ = std::numeric_limits<std::uint8_t>::max();
     enabled_systemd_units_.clear();
     sd_journal_flush_matches(journal_.get());
@@ -27,6 +31,7 @@ void JournalLogManager::enable_priority(Priority priority)
     {
         return;
     }
+    QUILL_LOG_DEBUG(l_log_manager(), "enable priority {}", static_cast<int>(priority));
     enabled_priorities_ |= details::flag_of(priority);
 
     add_priority_match(priority);
@@ -39,6 +44,7 @@ void JournalLogManager::disable_priority(Priority priority)
     {
         return;
     }
+    QUILL_LOG_DEBUG(l_log_manager(), "disable priority {}", static_cast<int>(priority));
     enabled_priorities_ &= ~details::flag_of(priority);
     apply_current_matches();
 }

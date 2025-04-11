@@ -10,16 +10,18 @@ include(GNUInstallDirs)
 include(GetGitRevisionDescription)
 include(Dependencies)
 
-option(DO_FETCH_DEPENDENCIES "true if cmake should fetch most of the dependencies" OFF)
-if(DO_FETCH_DEPENDENCIES)
-    fetch_dependencies()
-endif()
-
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_MODULE_STD OFF) # only with gcc15+
 set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 set(CMAKE_VISIBILITY_INLINES_HIDDEN 1)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
+option(DO_FETCH_DEPENDENCIES "true if cmake should fetch most of the dependencies" OFF)
+if(DO_FETCH_DEPENDENCIES)
+    fetch_dependencies()
+endif()
 
 get_git_head_revision(GIT_REF GIT_SHA)
 
@@ -40,7 +42,7 @@ cmrc_add_resource_library(journal-viewer-resources ALIAS journal::viewer-resourc
     LICENSE
 )
 
-
+add_subdirectory(core)
 add_subdirectory(journal)
 add_subdirectory(journal-viewer)
 

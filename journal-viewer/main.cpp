@@ -11,6 +11,7 @@
 #include <imgui.h>
 #include <imgui_impl_sdl3.h>
 #include <imgui_impl_sdlrenderer3.h>
+#include <journal/logger.hpp>
 #include <nfd.hpp>
 #include <quill/Backend.h>
 #include <quill/Frontend.h>
@@ -41,9 +42,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char **argv)
     This is free software, and you are welcome to redistribute it
     under certain conditions;
     )");
-    quill::Backend::start();
-    quill::Logger *logger = quill::Frontend::create_or_get_logger(
-        "root", quill::Frontend::create_or_get_sink<quill::ConsoleSink>("sink_id_1"));
+    jrn::setup_logger();
 
     if (NFD::Init() != nfdresult_t::NFD_OKAY)
     {
