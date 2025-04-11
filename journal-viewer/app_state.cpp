@@ -7,6 +7,8 @@
 #include <imgui.h>
 #include "file_browser.hpp"
 #include "journal_instance.hpp"
+#include "window_facade.hpp"
+
 CMRC_DECLARE(jrn);
 
 namespace jrn
@@ -14,6 +16,7 @@ namespace jrn
 AppState::AppState(SdlRenderer renderer, SdlWindow window)
     : renderer_{std::move(renderer)}
     , window_{std::move(window)}
+    , window_view_{registry_.view<LogWindowComponent>()}
 {
     auto embedded_fs = cmrc::jrn::get_filesystem();
 
@@ -46,13 +49,17 @@ void AppState::draw()
                 {
                     handle_ = std::move(journal_handle.value());
                     journal_info_ = std::make_unique<JournalInfo>(handle_);
-                    main_log_window_ = std::make_unique<JournalLogWindow>("Main log window", handle_, *journal_info_);
+                    registry_.ctx().emplace<LogWindowComponent>(
+                        std::make_unique<JournalLogWindow>(registry_, "Main log window", handle_, *journal_info_));
                 }
             }
             if (handle_.valid() and ImGui::MenuItem("New log window", "Ctrl-F"))
             {
-                log_windows_.emplace_back(std::make_unique<JournalLogWindow>(
-                    std::format("LogView##{}", log_windows_.size()), handle_, *journal_info_));
+                auto entity = registry_.create();
+                registry_.emplace<LogWindowComponent>(
+                    entity,
+                    std::make_unique<JournalLogWindow>(
+                        registry_, std::format("LogView##{}", window_unique_id_++), handle_, *journal_info_));
             }
 
             ImGui::EndMenu();
@@ -79,14 +86,14 @@ void AppState::draw()
 
     about_.draw();
 
-    if (main_log_window_ != nullptr) [[likely]]
+    if (registry_.ctx().contains<LogWindowComponent>()) [[likely]]
     {
-        main_log_window_->draw();
+        registry_.ctx().get<LogWindowComponent>()->draw();
     }
 
-    for (auto &&win : log_windows_)
+    for (auto &&[enitity, window] : window_view_.each())
     {
-        win->draw();
+        window->draw();
     }
 }
 

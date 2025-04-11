@@ -6,6 +6,8 @@
 #include <fmt/chrono.h>
 #include <fmt/format.h>
 #include <imgui.h>
+#include <imgui_stdlib.h>
+#include "window_facade.hpp"
 
 using namespace std::literals;
 
@@ -17,29 +19,50 @@ constexpr auto priority_color(Priority priority)
 {
     switch (priority)
     {
-    case Priority::emergency:
-        return IM_COL32(112, 2, 147, 255);
-    case Priority::alert:
-        return IM_COL32(147, 2, 105, 255);
-    case Priority::critical:
-        return IM_COL32(147, 2, 2, 255);
-    case Priority::error:
-        return IM_COL32(143, 21, 0, 255);
-    case Priority::warning:
-        return IM_COL32(138, 83, 0, 255);
-    case Priority::notice:
-        return IM_COL32(54, 106, 12, 255);
-    case Priority::info:
-        return IM_COL32(0, 96, 138, 255);
-    case Priority::debug:
-        return IM_COL32(58, 77, 85, 255);
+    case Priority::emergency: {
+        constexpr auto kColor = IM_COL32(112, 2, 147, 255);
+        return kColor;
     }
-    return IM_COL32(0, 0, 0, 255);
+    case Priority::alert: {
+        constexpr auto kColor = IM_COL32(147, 2, 105, 255);
+        return kColor;
+    }
+    case Priority::critical: {
+        constexpr auto kColor = IM_COL32(147, 2, 2, 255);
+        return kColor;
+    }
+    case Priority::error: {
+        constexpr auto kColor = IM_COL32(143, 21, 0, 255);
+        return kColor;
+    }
+    case Priority::warning: {
+        constexpr auto kColor = IM_COL32(138, 83, 0, 255);
+        return kColor;
+    }
+    case Priority::notice: {
+        constexpr auto kColor = IM_COL32(54, 106, 12, 255);
+        return kColor;
+    }
+    case Priority::info: {
+        constexpr auto kColor = IM_COL32(0, 96, 138, 255);
+        return kColor;
+    }
+    case Priority::debug: {
+        constexpr auto kColor = IM_COL32(58, 77, 85, 255);
+        return kColor;
+    }
+    }
+    constexpr auto kUnknownColor = IM_COL32(58, 77, 85, 255);
+    return kUnknownColor;
 }
 } // namespace
 
-JournalLogWindow::JournalLogWindow(std::string title, JournalInstanceHandle handle, const JournalInfo &info)
-    : title_{std::move(title)}
+JournalLogWindow::JournalLogWindow(entt::registry &registry,
+                                   std::string title,
+                                   JournalInstanceHandle handle,
+                                   const JournalInfo &info)
+    : registry_{registry}
+    , title_{std::move(title)}
     , manager_{handle}
     , info_{info}
 {}
@@ -48,7 +71,7 @@ void JournalLogWindow::draw_priority_filter(std::string_view title, const Priori
 {
     bool enabled{manager_.is_priority_enabled(priority)};
     ImGui::PushStyleColor(ImGuiCol_FrameBg, priority_color(priority));
-    if (ImGui::Checkbox(title.data(), &enabled))
+    if (ImGui::Checkbox(title.cbegin(), &enabled))
     {
         enabled ? manager_.enable_priority(priority) : manager_.disable_priority(priority);
     }
@@ -94,9 +117,23 @@ void JournalLogWindow::draw()
         }
         ImGui::EndMenuBar();
     }
-    constexpr ImGuiTableFlags table_flags = ImGuiTableFlags_BordersV | ImGuiTableFlags_SizingStretchProp |
-                                            ImGuiTableFlags_Resizable | ImGuiTableFlags_RowBg;
-    if (ImGui::BeginTable("for_sort_specs_only", 3, table_flags, ImGui::GetContentRegionAvail()))
+
+    if (ImGui::InputText("Search", &search_text_, ImGuiInputTextFlags_EnterReturnsTrue))
+    {
+        fmt::println("highlight: {}", search_text_);
+        manager_.update_highlighter_search_text(search_text_);
+    }
+    if (ImGui::InputText("Exclude", &exclude_text_, ImGuiInputTextFlags_EnterReturnsTrue))
+    {
+        fmt::println("exclude: {}", exclude_text_);
+        manager_.update_exclude_message_regex(exclude_text_);
+    }
+
+    constexpr ImGuiTableFlags kTableFlags = ImGuiTableFlags_ScrollY | ImGuiTableFlags_BordersV |
+                                            ImGuiTableFlags_SizingStretchProp | ImGuiTableFlags_Resizable |
+                                            ImGuiTableFlags_RowBg;
+
+    if (ImGui::BeginTable("for_sort_specs_only", 3, kTableFlags, ImGui::GetContentRegionAvail()))
     {
         ImGui::TableSetupColumn("Time");
         ImGui::TableSetupColumn("Unit");
@@ -104,26 +141,44 @@ void JournalLogWindow::draw()
         ImGui::TableHeadersRow();
 
         ImGuiListClipper clipper;
-        clipper.Begin(manager_.min_count_entries());
+        clipper.Begin(manager_.min_count_entries() + 1000);
         while (clipper.Step())
         {
-            manager_.for_each(clipper.DisplayStart, clipper.DisplayEnd, [this](auto &&entry) { draw_entry(entry); });
+            if (requested_scroll_index_.has_value() and clipper.ItemsHeight > 1.F) [[unlikely]]
+            {
+                ImGui::SetScrollY(clipper.ItemsHeight * static_cast<float>(requested_scroll_index_.value()));
+                past_scroll_index_ = requested_scroll_index_;
+                requested_scroll_index_ = std::nullopt;
+            }
+            manager_.for_each(clipper.DisplayStart, clipper.DisplayEnd, [this](auto &&index, auto &&entry) {
+                draw_entry(index, entry);
+            });
         }
         ImGui::EndTable();
     }
     ImGui::End();
 }
 
-void JournalLogWindow::draw_entry(const JournalEntry &entry)
+void JournalLogWindow::draw_entry(int index, const JournalEntry &entry)
 {
+    ImGui::PushID(index);
     ImGui::TableNextRow();
-    ImGui::PushID(&entry);
     ImGui::TableSetBgColor(ImGuiTableBgTarget_RowBg0, priority_color(entry.priority));
     const auto formatted_time{fmt::format("{}", entry.utc)};
     ImGui::TableSetColumnIndex(0);
+    if (entry.highlight or past_scroll_index_.has_value() and past_scroll_index_ == index) [[unlikely]]
+    {
+        ImDrawList *draw_list = ImGui::GetWindowDrawList();
+        const ImVec2 p = ImGui::GetCursorScreenPos();
+        draw_list->AddRectFilled(
+            {p.x - 5, p.y}, ImVec2{p.x, p.y + ImGui::GetTextLineHeight()}, IM_COL32(234, 162, 33, 255));
+    }
     const bool selected{selected_cursor_ == entry.cursor};
     const ImGuiSelectableFlags flags = selected ? ImGuiSelectableFlags_Highlight : ImGuiSelectableFlags_None;
-    ImGui::Selectable(formatted_time.c_str(), false, flags | ImGuiSelectableFlags_SpanAllColumns);
+    if (ImGui::Selectable(formatted_time.c_str(), false, flags | ImGuiSelectableFlags_SpanAllColumns))
+    {
+        registry_.ctx().get<pro::proxy<LogWindowFacade>>()->scroll_to_cursor(entry.cursor);
+    }
     if (ImGui::BeginPopupContextItem())
     {
         selected_cursor_ = entry.cursor;
@@ -145,5 +200,10 @@ void JournalLogWindow::draw_entry(const JournalEntry &entry)
     ImGui::TableSetColumnIndex(2);
     ImGui::TextUnformatted(entry.message.c_str());
     ImGui::PopID();
+}
+
+void JournalLogWindow::scroll_to_cursor(std::string_view cursor)
+{
+    requested_scroll_index_ = manager_.calculate_cursor_index(cursor) + 1;
 }
 } // namespace jrn

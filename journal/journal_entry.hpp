@@ -32,11 +32,13 @@ struct JournalEntry
     std::string cursor;
     std::string unit;
     std::string message;
-    Priority priority;
+    Priority priority{};
     UtcTimepoint utc;
+    bool highlight{};
 };
 
-JournalEntry fetch_entry(sd_journal *journal);
-
-std::string get_systemd_unit(sd_journal *journal);
+[[nodiscard]] JournalEntry fetch_entry(sd_journal *journal);
+[[nodiscard]] std::string fetch_cursor(sd_journal *journal);
+[[nodiscard]] std::string get_systemd_unit(sd_journal *journal);
+[[nodiscard]] std::string_view extract_field_data(const void *data, size_t length);
 } // namespace jrn

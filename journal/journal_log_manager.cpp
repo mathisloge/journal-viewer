@@ -15,6 +15,8 @@ JournalLogManager::JournalLogManager(JournalInstanceHandle handle)
 
 void JournalLogManager::reset_filters()
 {
+    enabled_priorities_ = std::numeric_limits<std::uint8_t>::max();
+    enabled_systemd_units_.clear();
     sd_journal_flush_matches(journal_.get());
     cache_.build_initial_cache(journal_.get());
 }
@@ -39,6 +41,22 @@ void JournalLogManager::disable_priority(Priority priority)
     }
     enabled_priorities_ &= ~details::flag_of(priority);
     apply_current_matches();
+}
+
+void JournalLogManager::update_highlighter_search_text(std::string search_text)
+{
+    highlighter_query_ = std::move(search_text);
+}
+
+void JournalLogManager::update_exclude_message_regex(std::string exclude_text)
+{
+    if (exclude_text.empty())
+    {
+        exclude_query_ = std::nullopt;
+        return;
+    }
+    exclude_query_ =
+        std::regex{std::move(exclude_text), std::regex_constants::ECMAScript | std::regex_constants::optimize};
 }
 
 void JournalLogManager::add_filter_systemd_unit(std::string systemd_unit)
@@ -72,7 +90,20 @@ void JournalLogManager::add_priority_match(Priority priority)
 
 bool JournalLogManager::match_dynamic_filter(const JournalEntry &entry) const
 {
-    return false;
+    if (not exclude_query_.has_value())
+    {
+        return false;
+    }
+    return std::regex_search(entry.message, exclude_query_.value());
+}
+
+bool JournalLogManager::match_dynamic_highlighter(const JournalEntry &entry) const
+{
+    if (highlighter_query_.empty())
+    {
+        return false;
+    }
+    return entry.message.find(highlighter_query_) != std::string::npos;
 }
 
 void JournalLogManager::apply_current_matches()
@@ -95,6 +126,23 @@ void JournalLogManager::apply_current_matches()
     }
 
     cache_.build_initial_cache(journal_.get());
+}
+
+std::uint64_t JournalLogManager::calculate_cursor_index(std::string_view cursor)
+{
+    sd_journal_seek_cursor(journal_.get(), cursor.cbegin());
+    sd_journal_next(journal_.get());
+    const auto nearest_cursor = fetch_cursor(journal_.get());
+    std::uint64_t index = 0;
+    sd_journal_seek_head(journal_.get());
+    for (; sd_journal_next(journal_.get()) > 0; ++index)
+    {
+        if (sd_journal_test_cursor(journal_.get(), nearest_cursor.c_str()) > 0)
+        {
+            break;
+        }
+    }
+    return index;
 }
 
 } // namespace jrn

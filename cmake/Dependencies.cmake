@@ -1,4 +1,7 @@
 function(fetch_dependencies)
+    set(tmp_BUILD_TESTING ${BUILD_TESTING})
+    set(BUILD_TESTING OFF)
+
     FetchContent_Declare(imgui
         GIT_REPOSITORY https://github.com/ocornut/imgui
         GIT_TAG 790f2b9a7aa2a23a2fb47ed8f48293f27c3ac658 # docking
@@ -37,10 +40,24 @@ function(fetch_dependencies)
         FIND_PACKAGE_ARGS
     )
 
-    FetchContent_MakeAvailable(fmt nfd quill cmakerc)
+    FetchContent_Declare(
+        proxy
+        GIT_REPOSITORY https://github.com/microsoft/proxy
+        GIT_TAG        3.3.0
+        FIND_PACKAGE_ARGS
+    )
+
+    FetchContent_Declare(
+        entt
+        GIT_REPOSITORY https://github.com/skypjack/entt
+        GIT_TAG        v3.15.0
+        FIND_PACKAGE_ARGS
+    )
+
+    FetchContent_MakeAvailable(fmt nfd quill cmakerc proxy entt)
 
 
-
+    set(BUILD_TESTING ${tmp_BUILD_TESTING})
     if(BUILD_TESTING)
         set(CATCH_INSTALL_DOCS OFF)
         FetchContent_Declare(

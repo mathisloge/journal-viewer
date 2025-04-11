@@ -12,6 +12,8 @@ target_link_libraries(journal PUBLIC
     PkgConfig::libsystemd
     fmt::fmt
     quill::quill
+    EnTT::EnTT
+    msft_proxy
 )
 
 target_sources(journal PRIVATE

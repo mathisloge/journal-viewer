@@ -16,6 +16,8 @@
     "libsystemd",
     "nativefiledialog-extended",
     "quill",
-    "sdl3"
+    "sdl3",
+    "entt",
+    "proxy"
   ]
 }

@@ -13,9 +13,13 @@ JournalInfo::JournalInfo(JournalInstanceHandle handle)
 {
     sd_journal_seek_head(journal_.get());
 
-    while (sd_journal_next(journal_.get()) > 0)
+    sd_journal_query_unique(journal_.get(), kSystemdUnitKey.cbegin());
+
+    const void *data{nullptr};
+    size_t length{};
+    SD_JOURNAL_FOREACH_UNIQUE(journal_.get(), data, length)
     {
-        systemd_units_.emplace(get_systemd_unit(journal_.get()));
+        systemd_units_.emplace(extract_field_data(data, length));
     }
 }
 

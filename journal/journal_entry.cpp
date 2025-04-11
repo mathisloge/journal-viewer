@@ -18,9 +18,7 @@ JournalEntry fetch_entry(sd_journal *journal)
 {
     JournalEntry entry;
 
-    char *cursor{};
-    sd_journal_get_cursor(journal, &cursor);
-    entry.cursor = std::move(cursor);
+    entry.cursor = fetch_cursor(journal);
     entry.message = get_data(journal, "MESSAGE");
     entry.unit = get_systemd_unit(journal);
     entry.priority = get_priority(journal);
@@ -34,13 +32,17 @@ std::string get_systemd_unit(sd_journal *journal)
     return std::string{get_data(journal, kSystemdUnitKey)};
 }
 
-namespace
+std::string fetch_cursor(sd_journal *journal)
 {
-std::string_view get_data(sd_journal *journal, std::string_view field)
+    char *cursor{};
+    sd_journal_get_cursor(journal, &cursor);
+    std::string cursor_str{cursor};
+    free(cursor); // NOLINT
+    return cursor_str;
+}
+
+std::string_view extract_field_data(const void *data, size_t length)
 {
-    const void *data{};
-    size_t length{};
-    std::ignore = sd_journal_get_data(journal, field.begin(), &data, &length);
     std::string_view data_str{static_cast<const char *>(data), length};
     const auto pos_prefix = data_str.find_first_of('=');
     if (pos_prefix != std::string_view::npos)
@@ -48,6 +50,16 @@ std::string_view get_data(sd_journal *journal, std::string_view field)
         data_str = data_str.substr(pos_prefix + 1);
     }
     return data_str;
+}
+
+namespace
+{
+std::string_view get_data(sd_journal *journal, std::string_view field)
+{
+    const void *data{};
+    size_t length{};
+    std::ignore = sd_journal_get_data(journal, field.begin(), &data, &length);
+    return extract_field_data(data, length);
 }
 
 Priority get_priority(sd_journal *journal)

@@ -106,6 +106,8 @@ SDL_AppResult SDL_AppIterate(void *appstate)
 
     state.draw();
 
+    ImGui::ShowDemoWindow();
+
     // Rendering
     ImGui::Render();
 
