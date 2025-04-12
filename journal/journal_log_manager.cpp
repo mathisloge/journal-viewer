@@ -51,6 +51,7 @@ void JournalLogManager::disable_priority(Priority priority)
 
 void JournalLogManager::update_highlighter_search_text(std::string search_text)
 {
+    QUILL_LOG_DEBUG(l_log_manager(), "update search text to {}", search_text);
     highlighter_query_ = std::move(search_text);
 }
 
@@ -58,15 +59,18 @@ void JournalLogManager::update_exclude_message_regex(std::string exclude_text)
 {
     if (exclude_text.empty())
     {
+        QUILL_LOG_DEBUG(l_log_manager(), "update exclude query to null");
         exclude_query_ = std::nullopt;
         return;
     }
+    QUILL_LOG_DEBUG(l_log_manager(), "update exclude query to {}", exclude_text);
     exclude_query_ =
         std::regex{std::move(exclude_text), std::regex_constants::ECMAScript | std::regex_constants::optimize};
 }
 
 void JournalLogManager::add_filter_systemd_unit(std::string systemd_unit)
 {
+    QUILL_LOG_DEBUG(l_log_manager(), "add unit '{}' to filter", systemd_unit);
     if (not enabled_systemd_units_.emplace(std::move(systemd_unit)).second)
     {
         return;
@@ -76,6 +80,7 @@ void JournalLogManager::add_filter_systemd_unit(std::string systemd_unit)
 
 void JournalLogManager::remove_filter_systemd_unit(const std::string &systemd_unit)
 {
+    QUILL_LOG_DEBUG(l_log_manager(), "remove unit '{}' from filter", systemd_unit);
     if (not has_filter_systemd_unit(systemd_unit))
     {
         return;
