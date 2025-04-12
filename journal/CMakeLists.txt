@@ -25,7 +25,8 @@ target_sources(journal PRIVATE
     journal_instance_handle.hpp
     journal_instance.cpp
     journal_instance.hpp
-    journal_cache.hpp
+    journal_cursor_cache.cpp
+    journal_cursor_cache.hpp
 )
 
 target_include_directories(journal PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})

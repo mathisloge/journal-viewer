@@ -164,7 +164,11 @@ void JournalLogWindow::draw_entry(int index, const JournalEntry &entry)
     ImGui::PushID(index);
     ImGui::TableNextRow();
     ImGui::TableSetBgColor(ImGuiTableBgTarget_RowBg0, priority_color(entry.priority));
-    const auto formatted_time{fmt::format("{}", entry.utc)};
+
+    auto sys_time = clock_cast<std::chrono::system_clock>(entry.utc);
+    auto local_time = std::chrono::zoned_time{std::chrono::current_zone(), sys_time}.get_local_time();
+
+    const auto formatted_time{fmt::format("{}", local_time)};
     ImGui::TableSetColumnIndex(0);
     if (entry.highlight or past_scroll_index_.has_value() and past_scroll_index_ == index) [[unlikely]]
     {

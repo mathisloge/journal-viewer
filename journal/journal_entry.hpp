@@ -25,7 +25,7 @@ enum class Priority : std::uint8_t
     debug
 };
 
-using UtcTimepoint = std::chrono::system_clock::time_point;
+using UtcTimepoint = std::chrono::utc_clock::time_point;
 
 struct JournalEntry
 {
