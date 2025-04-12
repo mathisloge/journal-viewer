@@ -165,10 +165,6 @@ void JournalLogWindow::draw_entry(int index, const JournalEntry &entry)
     ImGui::TableNextRow();
     ImGui::TableSetBgColor(ImGuiTableBgTarget_RowBg0, priority_color(entry.priority));
 
-    auto sys_time = clock_cast<std::chrono::system_clock>(entry.utc);
-    auto local_time = std::chrono::zoned_time{std::chrono::current_zone(), sys_time}.get_local_time();
-
-    const auto formatted_time{fmt::format("{}", local_time)};
     ImGui::TableSetColumnIndex(0);
     if (entry.highlight or past_scroll_index_.has_value() and past_scroll_index_ == index) [[unlikely]]
     {
@@ -179,6 +175,9 @@ void JournalLogWindow::draw_entry(int index, const JournalEntry &entry)
     }
     const bool selected{selected_cursor_ == entry.cursor};
     const ImGuiSelectableFlags flags = selected ? ImGuiSelectableFlags_Highlight : ImGuiSelectableFlags_None;
+    const auto sys_time = clock_cast<std::chrono::system_clock>(entry.utc);
+    const auto local_time = std::chrono::zoned_time{std::chrono::current_zone(), sys_time};
+    const auto formatted_time{std::format("{}", local_time)};
     if (ImGui::Selectable(formatted_time.c_str(), false, flags | ImGuiSelectableFlags_SpanAllColumns))
     {
         registry_.ctx().get<pro::proxy<LogWindowFacade>>()->scroll_to_cursor(entry.cursor);
