@@ -13,6 +13,7 @@ target_link_libraries(journal PUBLIC
     journal::core
     EnTT::EnTT
     msft_proxy
+    asio::asio
 )
 
 target_sources(journal PRIVATE
@@ -27,6 +28,8 @@ target_sources(journal PRIVATE
     journal_instance.hpp
     journal_cursor_cache.cpp
     journal_cursor_cache.hpp
+    async_journal_log_manager.cpp
+    async_journal_log_manager.hpp
 )
 
 target_include_directories(journal PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})

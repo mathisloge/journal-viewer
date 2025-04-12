@@ -9,6 +9,7 @@ target_sources(core
             FILES
                 include/journal/core.hpp
                 include/journal/logger.hpp
+                include/journal/lru_cache.hpp
     PRIVATE
         core.cpp
         logger.cpp
@@ -18,4 +19,8 @@ target_compile_features(core PUBLIC cxx_std_23)
 target_compile_definitions(core PUBLIC QUILL_DISABLE_NON_PREFIXED_MACROS)
 
 
-target_link_libraries(core PUBLIC fmt::fmt quill::quill)
+target_link_libraries(core PUBLIC
+    fmt::fmt
+    quill::quill
+    asio::asio
+)

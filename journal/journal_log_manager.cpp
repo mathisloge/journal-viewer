@@ -156,4 +156,27 @@ std::uint64_t JournalLogManager::calculate_cursor_index(std::string_view cursor)
     return index;
 }
 
+std::vector<JournalEntry> JournalLogManager::fetch_chunk(std::uint64_t begin, const std::uint64_t end)
+{
+    std::vector<JournalEntry> entries;
+    entries.reserve(end - begin);
+
+    cache_.seek_to_index(begin);
+    while (begin < end)
+    {
+        auto entry = fetch_entry(journal_.get());
+        if (not match_dynamic_filter(entry))
+        {
+            entry.highlight = match_dynamic_highlighter(entry);
+            entries.emplace_back(std::move(entry));
+            begin++;
+        }
+        if (sd_journal_next(journal_.get()) <= 0)
+        {
+            break;
+        }
+    }
+    return entries;
+}
+
 } // namespace jrn

@@ -54,6 +54,12 @@ function(fetch_dependencies)
         FIND_PACKAGE_ARGS
     )
 
+    FetchContent_Declare(
+        asio
+        GIT_REPOSITORY https://github.com/chriskohlhoff/asio
+        GIT_TAG        4730c543ba2b8f9396ef1964a25ccc26eb1aea64
+    )
+
     FetchContent_MakeAvailable(fmt nfd quill cmakerc proxy entt)
 
 

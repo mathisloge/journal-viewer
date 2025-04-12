@@ -52,6 +52,8 @@ class JournalLogManager
         return details::is_flag_set(priority, enabled_priorities_);
     }
 
+    std::vector<JournalEntry> fetch_chunk(std::uint64_t begin, std::uint64_t end);
+
     void for_each(std::uint64_t begin, const std::uint64_t end, auto &&predicate)
     {
         cache_.seek_to_index(begin);
@@ -64,7 +66,7 @@ class JournalLogManager
                 predicate(begin, entry);
                 begin++;
             }
-            if (sd_journal_next(journal_.get()) == 0)
+            if (sd_journal_next(journal_.get()) <= 0)
             {
                 break;
             }

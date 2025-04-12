@@ -4,6 +4,7 @@
 
 #pragma once
 #include <entt/entity/registry.hpp>
+#include <journal/lru_cache.hpp>
 #include <journal_info.hpp>
 #include <journal_instance_handle.hpp>
 #include <journal_log_manager.hpp>

@@ -3,6 +3,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "app_state.hpp"
+#include <asio/executor_work_guard.hpp>
+#include <asio/io_context.hpp>
 #include <cmrc/cmrc.hpp>
 #include <imgui.h>
 #include "file_browser.hpp"
@@ -28,6 +30,13 @@ AppState::AppState(SdlRenderer renderer, SdlWindow window)
     io.Fonts->AddFontFromMemoryTTF(static_cast<void *>(raw_font), font_src.size(), 16.0F);
 
     io.Fonts->Build();
+
+    registry_.ctx().emplace<asio::io_context>();
+    io_ctx_thread_ = std::jthread{[this]() {
+        auto &ctx = registry_.ctx().get<asio::io_context>();
+        asio::executor_work_guard<decltype(ctx.get_executor())> work_guard{ctx.get_executor()};
+        ctx.run();
+    }};
 }
 
 AppState::~AppState() = default;
