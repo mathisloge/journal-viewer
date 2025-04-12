@@ -28,7 +28,10 @@
         {
             "name": "vcpkg",
             "hidden": true,
-            "toolchainFile": "$penv{VCPKG_HOME}/scripts/buildsystems/vcpkg.cmake"
+            "toolchainFile": "$penv{VCPKG_HOME}/scripts/buildsystems/vcpkg.cmake",
+            "cacheVariables": {
+                "VCPKG_OVERLAY_PORTS": "${sourceDir}/cmake/overlays"
+            }
         },
         {
             "name": "debug-build",
@@ -89,6 +92,7 @@
             ],
             "toolchainFile": "vcpkg/scripts/buildsystems/vcpkg.cmake",
             "cacheVariables": {
+                "VCPKG_OVERLAY_PORTS": "${sourceDir}/cmake/overlays",
                 "CMAKE_BUILD_TYPE": "RelWithDebInfo",
                 "BUILD_TESTING": true,
                 "CMAKE_C_COMPILER": "gcc-13",
