@@ -7,7 +7,7 @@
 #include <unordered_set>
 #include <utility>
 #include "details/sd_journal.hpp"
-#include "journal_cache.hpp"
+#include "journal_cursor_cache.hpp"
 #include "journal_entry.hpp"
 #include "journal_instance_handle.hpp"
 
@@ -95,7 +95,7 @@ class JournalLogManager
 
   private:
     systemd::Journal journal_;
-    JournalCache cache_{journal_.get()};
+    JournalCursorCache cache_{journal_.get()};
     std::uint8_t enabled_priorities_{std::numeric_limits<std::uint8_t>::max()};
     std::unordered_set<std::string> enabled_systemd_units_;
     std::string highlighter_query_;

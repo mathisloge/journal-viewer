@@ -7,10 +7,11 @@
 #include <SDL3/SDL_main.h>
 #include <SDL3/SDL_render.h>
 #include <SDL3/SDL_timer.h>
-#include <fmt/chrono.h>
+#include <fmt/core.h>
 #include <imgui.h>
 #include <imgui_impl_sdl3.h>
 #include <imgui_impl_sdlrenderer3.h>
+#include <journal/logger.hpp>
 #include <nfd.hpp>
 #include <quill/Backend.h>
 #include <quill/Frontend.h>
@@ -33,6 +34,8 @@ constexpr jrn::AppState &from_appstate(void *appstate)
 }
 } // namespace
 
+DEFINE_LOGGER(root)
+
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char **argv)
 {
     fmt::println(R"(
@@ -41,17 +44,17 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char **argv)
     This is free software, and you are welcome to redistribute it
     under certain conditions;
     )");
-    quill::Backend::start();
-    quill::Logger *logger = quill::Frontend::create_or_get_logger(
-        "root", quill::Frontend::create_or_get_sink<quill::ConsoleSink>("sink_id_1"));
+    jrn::setup_logger();
 
     if (NFD::Init() != nfdresult_t::NFD_OKAY)
     {
+        QUILL_LOG_CRITICAL(l_root(), "Could not initialize file dialogs");
         return SDL_AppResult::SDL_APP_FAILURE;
     }
 
     if (not SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMEPAD))
     {
+        QUILL_LOG_CRITICAL(l_root(), "Could not initialize SDL");
         return SDL_AppResult::SDL_APP_FAILURE;
     }
 
@@ -60,6 +63,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char **argv)
     window.reset(SDL_CreateWindow("Journal log viewer", 1280, 720, window_flags));
     if (window == nullptr)
     {
+        QUILL_LOG_CRITICAL(l_root(), "Could not create a window");
         return SDL_AppResult::SDL_APP_FAILURE;
     }
 
@@ -67,6 +71,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char **argv)
     renderer.reset(SDL_CreateRenderer(window.get(), nullptr));
     if (renderer == nullptr)
     {
+        QUILL_LOG_CRITICAL(l_root(), "Could not create a renderer");
         return SDL_AppResult::SDL_APP_FAILURE;
     }
     SDL_SetRenderVSync(renderer.get(), 1);
@@ -88,6 +93,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char **argv)
     ImGui_ImplSDLRenderer3_Init(renderer.get());
 
     *appstate = std::addressof(create_stable_state(std::move(renderer), std::move(window)));
+    QUILL_LOG_INFO(l_root(), "App initialized.");
     return SDL_AppResult::SDL_APP_CONTINUE;
 }
 
@@ -96,7 +102,7 @@ SDL_AppResult SDL_AppIterate(void *appstate)
     auto &state{from_appstate(appstate)};
     if ((SDL_GetWindowFlags(state.window()) & SDL_WINDOW_MINIMIZED) != 0U)
     {
-        SDL_Delay(10);
+        SDL_Delay(50);
         return SDL_AppResult::SDL_APP_CONTINUE;
     }
 
@@ -130,11 +136,13 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
     }
     if (event->type == SDL_EVENT_QUIT)
     {
+        QUILL_LOG_INFO(l_root(), "Received quit event...");
         return SDL_AppResult::SDL_APP_SUCCESS;
     }
     auto &state{from_appstate(appstate)};
     if (event->type == SDL_EVENT_WINDOW_CLOSE_REQUESTED && event->window.windowID == SDL_GetWindowID(state.window()))
     {
+        QUILL_LOG_INFO(l_root(), "Received window close event...");
         return SDL_AppResult::SDL_APP_SUCCESS;
     }
 

@@ -12,7 +12,7 @@ function(fetch_dependencies)
     FetchContent_Declare(
         fmt
         GIT_REPOSITORY https://github.com/fmtlib/fmt.git
-        GIT_TAG        11.1.4
+        GIT_TAG        64db979e38ec644b1798e41610b28c8d2c8a2739
         FIND_PACKAGE_ARGS
     )
 
@@ -20,7 +20,7 @@ function(fetch_dependencies)
     FetchContent_Declare(
         quill
         GIT_REPOSITORY https://github.com/odygrd/quill.git
-        GIT_TAG        v8.2.0
+        GIT_TAG        v9.0.0
         FIND_PACKAGE_ARGS
     )
 
