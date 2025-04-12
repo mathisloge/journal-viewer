@@ -1,6 +1,6 @@
 {
     "name": "fmt",
-    "version": "11.1.4",
+    "version-string": "64db979e38ec644b1798e41610b28c8d2c8a2739",
     "port-version": 0,
     "description": "{fmt} is an open-source formatting library providing a fast and safe alternative to C stdio and C++ iostreams.",
     "homepage": "https://github.com/fmtlib/fmt",
