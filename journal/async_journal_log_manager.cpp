@@ -10,5 +10,6 @@ namespace jrn
 AsyncJournalLogManager::AsyncJournalLogManager(asio::io_context &io_ctx, JournalInstanceHandle handle)
     : strand_{io_ctx.get_executor()}
     , manager_{handle}
+    , chunk_cache_{20}
 {}
 } // namespace jrn

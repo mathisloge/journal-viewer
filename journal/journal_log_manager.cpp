@@ -5,6 +5,7 @@
 #include "journal_log_manager.hpp"
 #include <utility>
 #include <journal/logger.hpp>
+#include <quill/StopWatch.h>
 #include "journal_instance.hpp"
 
 DEFINE_LOGGER(log_manager);
@@ -158,6 +159,8 @@ std::uint64_t JournalLogManager::calculate_cursor_index(std::string_view cursor)
 
 std::vector<JournalEntry> JournalLogManager::fetch_chunk(std::uint64_t begin, const std::uint64_t end)
 {
+    QUILL_LOG_DEBUG(l_log_manager(), "Fetching chunk for index {} to {}", begin, end);
+    quill::StopWatchTsc watch;
     std::vector<JournalEntry> entries;
     entries.reserve(end - begin);
 
@@ -176,6 +179,7 @@ std::vector<JournalEntry> JournalLogManager::fetch_chunk(std::uint64_t begin, co
             break;
         }
     }
+    QUILL_LOG_DEBUG(l_log_manager(), "Chunk fetched in {}", watch.elapsed_as<std::chrono::milliseconds>());
     return entries;
 }
 

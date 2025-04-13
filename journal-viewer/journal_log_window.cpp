@@ -63,7 +63,7 @@ JournalLogWindow::JournalLogWindow(entt::registry &registry,
                                    const JournalInfo &info)
     : registry_{registry}
     , title_{std::move(title)}
-    , manager_{handle}
+    , manager_{registry_.ctx().get<asio::io_context>(), handle}
     , info_{info}
 {}
 

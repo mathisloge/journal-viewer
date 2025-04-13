@@ -44,7 +44,7 @@ class LruCache
         return map_.find(key) != map_.end();
     }
 
-    void insert(const key_type &key, const value_type &value)
+    void emplace(const key_type &key, value_type &&value)
     {
         typename map_type::iterator i = map_.find(key);
         if (i == map_.end())
@@ -55,11 +55,11 @@ class LruCache
                 remove_least_used();
             }
             list_.emplace_front(key);
-            map_[key] = std::make_pair(value, list_.begin());
+            map_[key] = std::make_pair(std::move(value), list_.begin());
         }
     }
 
-    std::optional<value_type> get(const key_type &key)
+    std::optional<value_type *> get(const key_type &key)
     {
         // lookup value in the cache
         const auto key_it = map_.find(key);
@@ -73,7 +73,7 @@ class LruCache
         list_.splice(list_.begin(), list_, key_it->second.second);
         // update map iterator
         key_it->second.second = list_.begin();
-        return key_it->second.first;
+        return std::addressof(key_it->second.first);
     }
 
     void clear()

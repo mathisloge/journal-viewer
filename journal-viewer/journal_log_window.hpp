@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #pragma once
+#include <async_journal_log_manager.hpp>
 #include <entt/entity/registry.hpp>
 #include <journal/lru_cache.hpp>
 #include <journal_info.hpp>
@@ -30,7 +31,7 @@ struct JournalLogWindow
     std::string title_;
     bool open_{true};
     const JournalInfo &info_;
-    JournalLogManager manager_;
+    AsyncJournalLogManager manager_;
     std::string selected_cursor_;
     std::optional<std::uint64_t> requested_scroll_index_;
     std::optional<std::uint64_t> past_scroll_index_;
